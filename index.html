@@ -1,0 +1,1838 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>KAMILLAPPSHEET — Dashboard Ejecutivo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          /* ── Logistics Executive Palette ── */
+          "primary":                "#FFD100",   /* Golden Yellow  */
+          "on-primary":             "#0D0D0D",
+          "primary-container":      "#3A2F00",
+          "on-primary-container":   "#FFD100",
+          "secondary":              "#00EBFF",   /* Cyan / Tertiary */
+          "on-secondary":           "#0D0D0D",
+          "secondary-container":    "#003840",
+          "on-secondary-container": "#00EBFF",
+          "tertiary":               "#666666",
+          "on-tertiary":            "#F5F5F5",
+          "tertiary-container":     "#2A2A2A",
+          "error":                  "#FF4C4C",
+          "on-error":               "#0D0D0D",
+          "error-container":        "#3B0000",
+          "on-error-container":     "#FF4C4C",
+          /* ── Surfaces (dark executive) ── */
+          "background":             "#F5F5F5",
+          "on-background":          "#1A1A1A",
+          "surface":                "#FFFFFF",
+          "on-surface":             "#1A1A1A",
+          "surface-variant":        "#F0F0F0",
+          "on-surface-variant":     "#555555",
+          "surface-container-lowest":"#FFFFFF",
+          "surface-container-low":  "#F8F8F8",
+          "surface-container":      "#F0F0F0",
+          "surface-container-high": "#E8E8E8",
+          "surface-container-highest":"#E0E0E0",
+          "surface-dim":            "#E0E0E0",
+          "surface-bright":         "#FFFFFF",
+          "inverse-surface":        "#F5F5F5",
+          "inverse-on-surface":     "#0D0D0D",
+          "inverse-primary":        "#3A2F00",
+          /* ── Outlines ── */
+          "outline":                "#CCCCCC",
+          "outline-variant":        "#E5E5E5",
+          /* ── Fixed / misc ── */
+          "surface-tint":           "#FFD100",
+          "primary-fixed":          "#3A2F00",
+          "primary-fixed-dim":      "#FFD100",
+          "on-primary-fixed":       "#FFD100",
+          "secondary-fixed":        "#003840",
+          "secondary-fixed-dim":    "#00EBFF"
+        },
+        "fontFamily": {
+          "table-header": ["Inter","sans-serif"],
+          "headline-lg":  ["Inter","sans-serif"],
+          "headline-md":  ["Inter","sans-serif"],
+          "body-lg":      ["Inter","sans-serif"],
+          "body-md":      ["Inter","sans-serif"],
+          "body-sm":      ["Inter","sans-serif"],
+          "label-data":   ["JetBrains Mono","monospace"]
+        },
+        "fontSize": {
+          "table-header": ["11px", {"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],
+          "headline-lg":  ["32px", {"lineHeight":"40px","letterSpacing":"-0.03em","fontWeight":"800"}],
+          "body-md":      ["14px", {"lineHeight":"20px","fontWeight":"400"}],
+          "body-lg":      ["16px", {"lineHeight":"24px","fontWeight":"400"}],
+          "body-sm":      ["12px", {"lineHeight":"16px","fontWeight":"400"}],
+          "label-data":   ["12px", {"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"500"}],
+          "headline-md":  ["22px", {"lineHeight":"30px","fontWeight":"700"}]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  /* ── Base ── */
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  body { font-family: 'Inter', sans-serif; background: #F5F5F5; color: #1A1A1A; }
+
+  /* ── Scrollbar ── */
+  .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: #F0F0F0; border-radius: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #FFD100; border-radius: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #00EBFF; }
+
+  /* ── Sticky table headers ── */
+  thead th {
+    position: sticky; top: 0; z-index: 10;
+    background: #FFD100;
+    color: #1A1A1A;
+    border-bottom: 2px solid #E5B800;
+  }
+
+  /* ── Table rows ── */
+  tbody tr:nth-child(even) { background: #FAFAFA; }
+  tbody tr:nth-child(odd)  { background: #FFFFFF; }
+  tbody tr:hover { background: #FFF8E0; }
+  tbody td { border-color: #E8E8E8 !important; color: #1A1A1A; }
+
+  /* ── Animations ── */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { animation: spin 1s linear infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── State rows ── */
+  .loading-row td { text-align: center; padding: 2.5rem; color: #888; font-family: 'Inter', sans-serif; }
+  .error-row   td { text-align: center; padding: 2rem;   color: #FF4C4C; }
+
+  /* ── Last update / mono label ── */
+  .last-update { font-size: 11px; color: #999; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em; }
+
+  /* ── Status badges ── */
+  .badge-ok    { background: #DCFCE7; color: #15803D; border: 1px solid #BBF7D0; border-radius: 4px; padding: 2px 10px; font-size: 11px; font-weight: 700; letter-spacing:.05em; }
+  .badge-warn  { background: #FFFBEB; color: #B45309; border: 1px solid #FDE68A; border-radius: 4px; padding: 2px 10px; font-size: 11px; font-weight: 700; letter-spacing:.05em; }
+  .badge-error { background: #FEE2E2; color: #B91C1C; border: 1px solid #FECACA; border-radius: 4px; padding: 2px 10px; font-size: 11px; font-weight: 700; letter-spacing:.05em; }
+
+  /* ── Live pulse dot ── */
+  .auto-dot { width:8px; height:8px; border-radius:50%; background:#16A34A; display:inline-block; animation: pulse 2s infinite; box-shadow: 0 0 4px rgba(22,163,74,.4); }
+
+  /* ── KPI cards accent line ── */
+  .kpi-card { position: relative; overflow: hidden; }
+  .kpi-card::before { content:''; position:absolute; top:0; left:0; width:3px; height:100%; background: #FFD100; }
+  .kpi-card.cyan::before { background: #00EBFF; }
+  .kpi-card.red::before  { background: #FF4C4C; }
+
+  /* ── Nav active indicator ── */
+  a[data-nav].active-nav {
+    color: #1A1A1A !important;
+    background: #FFD100 !important;
+    border-right: 3px solid #E5B800;
+  }
+
+  /* ── Primary button ── */
+  .btn-primary {
+    background: #FFD100; color: #1A1A1A; font-weight: 700;
+    border-radius: 4px; padding: 4px 14px; font-size: 12px;
+    transition: all .15s;
+  }
+  .btn-primary:hover { background: #E5B800; }
+
+  /* ── Secondary/outline button ── */
+  .btn-outline-cyan {
+    background: transparent; color: #1A1A1A;
+    border: 1px solid #CCCCCC; border-radius: 4px;
+    padding: 4px 14px; font-size: 12px; font-weight: 700;
+    transition: all .15s;
+  }
+  .btn-outline-cyan:hover { background: #F0F0F0; }
+
+  .btn-ghost {
+    background: transparent; color: #555555;
+    border: 1px solid #CCCCCC; border-radius: 4px;
+    padding: 4px 14px; font-size: 12px; font-weight: 700;
+    transition: all .15s;
+  }
+  .btn-ghost:hover { border-color: #999; color: #1A1A1A; }
+
+  /* ── Input fields ── */
+  input[type="text"], input[type="search"], input:not([type="checkbox"]):not([type="date"]) {
+    background: #FFFFFF !important; color: #1A1A1A !important;
+    border-color: #CCCCCC !important;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  input[type="date"] {
+    background: #FFFFFF !important; color: #1A1A1A !important;
+    border-color: #CCCCCC !important;
+    color-scheme: light;
+  }
+  input:focus { border-color: #FFD100 !important; box-shadow: 0 0 0 3px rgba(255,209,0,.2) !important; }
+
+  /* ── Sidebar ── */
+  aside { background: #1A1A1A !important; border-right: 1px solid #2A2A2A !important; }
+
+  /* ── Top header ── */
+  header { background: #1A1A1A !important; border-bottom: 2px solid #FFD100 !important; }
+
+  /* ── Cards ── */
+  .exec-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 6px;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .exec-card:hover { border-color: #FFD100; box-shadow: 0 2px 12px rgba(255,209,0,.12); }
+
+  /* ── Section full-width overrides ── */
+  body[data-active="saldo"] .tables-col,
+  body[data-active="movimiento"] .tables-col { grid-column: span 12 / span 12; }
+  body[data-active="saldo"] .saldo-scroll,
+  body[data-active="saldo"] .mov-scroll,
+  body[data-active="movimiento"] .saldo-scroll,
+  body[data-active="movimiento"] .mov-scroll { max-height: calc(100vh - 280px); }
+
+  /* ── Yellow text accent ── */
+  .text-accent { color: #FFD100; }
+  .text-cyan   { color: #00EBFF; }
+
+  /* ── Donut chart container ── */
+  #donut-chart { filter: drop-shadow(0 2px 8px rgba(0,0,0,.1)); }
+
+  /* ── FAB ── */
+  .fab {
+    background: #FFD100; color: #1A1A1A;
+    box-shadow: 0 4px 20px rgba(0,0,0,.15);
+  }
+  .fab:hover { background: #E5B800; box-shadow: 0 6px 28px rgba(0,0,0,.2); transform: scale(1.06); }
+
+  /* ── Separator lines with cyan ── */
+  .section-divider { border-color: #1E1E1E; }
+</style>
+</head>
+<body class="bg-background text-on-background">
+
+<!-- SideNavBar -->
+<aside class="h-screen fixed left-0 top-0 flex flex-col py-6 z-50 w-40" style="background:#1A1A1A;border-right:1px solid #2A2A2A;">
+  <div class="px-4 mb-6 flex flex-col items-center gap-2">
+    <div class="w-16 h-16 flex items-center justify-center rounded-lg overflow-hidden " style="border:1px solid #E5E5E5;">
+      <img alt="Logo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4NJMHsdDlCg52Ed-P7Bo9t37SoLculsDk4KdYXQhHemRTogxYJNjhTr76JWZ2w9Uwkw7nSEQ9hVWVm4b20NK7QLxgHJvsKk_Vjm8xdHC7-XkqmeUOTuxi52Kb_W_MqJvRi667SqA33Ex--nVyZ-5xua_PcW9Ps3Ta36tI9rid285R6OtPAquWsrHu5VGmij2ABJ0THXPxPz5XDRMolTUzKQEhqlVPgddeGmCKTWfWFuQq-HfO-7r9H512MSPYThjnYpY">
+    </div>
+    <div class="text-center">
+      <h1 class="font-semibold text-[13px] leading-none" style="color:#FFD100;">Omar Bernales</h1>
+      <p class="text-[10px] mt-0.5" style="color:#AAA;">Odan89</p>
+    </div>
+    <div class="w-full border-t mt-1" style="border-color:#2A2A2A;"></div>
+  </div>
+  <nav class="flex-1 space-y-0.5 px-2">
+    <a data-nav="dashboard" onclick="showSection('dashboard')" class="flex flex-col items-center gap-1 px-2 py-3 font-bold active-nav transition-colors duration-200 cursor-pointer" href="#">
+      <span class="material-symbols-outlined text-[20px]">dashboard</span>
+      <span class="text-[10px] font-semibold tracking-wide uppercase">Dashboard</span>
+    </a>
+    <a data-nav="saldo" onclick="showSection('saldo')" class="flex flex-col items-center gap-1 px-2 py-3 transition-colors duration-200 cursor-pointer" style="color:#AAA;" href="#">
+      <span class="material-symbols-outlined text-[20px]">inventory_2</span>
+      <span class="text-[10px] font-semibold tracking-wide uppercase">Saldo</span>
+    </a>
+    <a data-nav="movimiento" onclick="showSection('movimiento')" class="flex flex-col items-center gap-1 px-2 py-3 transition-colors duration-200 cursor-pointer" style="color:#AAA;" href="#">
+      <span class="material-symbols-outlined text-[20px]">history</span>
+      <span class="text-[10px] font-semibold tracking-wide uppercase">Movimiento</span>
+    </a>
+    <a data-nav="bajas" onclick="showSection('bajas')" class="flex flex-col items-center gap-1 px-2 py-3 transition-colors duration-200 cursor-pointer" style="color:#AAA;" href="#">
+      <span class="material-symbols-outlined text-[20px]">trending_down</span>
+      <span class="text-[10px] font-semibold tracking-wide uppercase text-center leading-tight">Rpt. Bajas</span>
+    </a>
+  </nav>
+  <div class="px-3 pb-2">
+    <div class="w-full border-t mb-3" style="border-color:#2A2A2A;"></div>
+    <div class="text-center text-[9px] font-mono" style="color:#555;letter-spacing:.06em;">KAMILLAPPSHEET v2</div>
+  </div>
+</aside>
+
+<!-- TopNavBar -->
+<header class="flex justify-between items-center h-14 px-8 fixed top-0 z-40 w-[calc(100%-10rem)] ml-40" style="background:#1A1A1A;border-bottom:2px solid #FFD100;">
+  <div class="flex items-center gap-4 flex-1">
+    <div class="relative w-full max-w-md">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px]" style="color:#AAA;">search</span>
+      <input id="global-search" class="w-full rounded-md pl-10 pr-4 py-2 text-[13px] outline-none transition-all border" placeholder="Filtrar por producto, lote o ubicacion..." style="background:#2A2A2A;border-color:#3A3A3A;color:#F5F5F5;font-family:'JetBrains Mono',monospace;">
+    </div>
+  </div>
+  <div class="flex items-center gap-5">
+    <div class="flex items-center gap-4 pr-5" style="border-right:1px solid #3A3A3A;">
+      <button onclick="mostrarAlertas()" class="relative transition-all" style="color:#AAA;" title="Alertas de vencimiento">
+        <span class="material-symbols-outlined text-[22px]">notifications</span>
+        <span id="alert-badge" class="absolute -top-1 -right-1 w-2 h-2 rounded-full hidden" style="background:#EF4444;"></span>
+      </button>
+      <button onclick="mostrarInfoApp()" class="transition-all" style="color:#AAA;" title="Información del sistema">
+        <span class="material-symbols-outlined text-[22px]">account_circle</span>
+      </button>
+    </div>
+    <div class="font-black text-[15px] tracking-widest uppercase" style="color:#FFD100;letter-spacing:.10em;">KAMILLAPPSHEET<span style="color:#1A1A1A;font-weight:300;letter-spacing:.04em;margin-left:4px;font-size:11px;vertical-align:middle;">WMS</span></div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="mt-14 p-6 min-h-[calc(100vh-56px)] ml-40" style="background:#F5F5F5;">
+
+  <!-- Header -->
+  <div data-section="dashboard" class="mb-6 flex justify-between items-end flex-wrap gap-2">
+    <div>
+      <p class="text-[11px] font-mono uppercase tracking-widest mb-1" style="color:#AAA;">Sistema de Gestión de Inventario</p>
+      <h2 class="font-black text-[28px] leading-none" style="color:#1A1A1A;letter-spacing:-.02em;">Resumen de Saldo <span style="color:#FFD100;font-weight:800;">&amp; Stock</span></h2>
+      <p class="text-[13px] mt-1" style="color:#666;">Estado actual de stock y movimientos logísticos en tiempo real.</p>
+    </div>
+    <div class="flex items-center gap-2 pb-1">
+      <span class="auto-dot"></span>
+      <span class="last-update" id="last-update-global">Iniciando auto-actualización cada 5min...</span>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div data-section="dashboard" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="kpi-card exec-card p-5 rounded-md">
+      <div class="flex justify-between items-start mb-3">
+        <div class="p-1.5 rounded" style="background:#FFF8D0;">
+          <span class="material-symbols-outlined text-[20px]" style="color:#FFD100;">inventory_2</span>
+        </div>
+        <span class="text-[10px] font-black tracking-widest uppercase" style="color:#888;">Stock Total</span>
+      </div>
+      <div class="mt-4">
+        <p class="font-black text-[34px] leading-none" style="color:#1A1A1A;" id="kpi-total">—</p>
+        <p class="text-[11px] mt-1.5 font-mono" style="color:#AAA;">Unidades en sistema</p>
+      </div>
+    </div>
+    <div class="kpi-card cyan exec-card p-5 rounded-md">
+      <div class="flex justify-between items-start mb-3">
+        <div class="p-1.5 rounded" style="background:#E0FFFE;">
+          <span class="material-symbols-outlined text-[20px]" style="color:#00EBFF;">check_circle</span>
+        </div>
+        <span class="text-[10px] font-black tracking-widest uppercase" style="color:#888;">Disponible</span>
+      </div>
+      <div class="mt-4">
+        <p class="font-black text-[34px] leading-none" style="color:#0891B2;" id="kpi-disponible">—</p>
+        <p class="text-[11px] mt-1.5 font-mono" style="color:#AAA;">Lotes vigentes</p>
+      </div>
+    </div>
+    <div class="kpi-card red exec-card p-5 rounded-md">
+      <div class="flex justify-between items-start mb-3">
+        <div class="p-1.5 rounded" style="background:#FFE8E8;">
+          <span class="material-symbols-outlined text-[20px]" style="color:#FF4C4C;">warning</span>
+        </div>
+        <span class="text-[10px] font-black tracking-widest uppercase" style="color:#888;">Vencidos</span>
+      </div>
+      <div class="mt-4">
+        <p class="font-black text-[34px] leading-none" style="color:#DC2626;" id="kpi-bajas">—</p>
+        <p class="text-[11px] mt-1.5 font-mono" style="color:#AAA;">Requieren acción</p>
+      </div>
+    </div>
+    <div class="kpi-card exec-card p-5 rounded-md" style="border-left:none;">
+      <div class="flex justify-between items-start mb-3">
+        <div class="p-1.5 rounded" style="background:#FFF8D0;">
+          <span class="material-symbols-outlined text-[20px]" style="color:#FFD100;">visibility</span>
+        </div>
+        <span class="text-[10px] font-black tracking-widest uppercase" style="color:#888;">Alertas</span>
+      </div>
+      <div class="mt-4">
+        <p class="font-black text-[34px] leading-none" style="color:#D97706;" id="kpi-alertas">—</p>
+        <p class="text-[11px] mt-1.5 font-mono" style="color:#AAA;">Próx. a vencer (&lt;90d)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="grid grid-cols-12 gap-6">
+    <div class="tables-col col-span-12 lg:col-span-9 space-y-6">
+
+      <!-- TABLA SALDO -->
+      <div data-section="dashboard saldo" class="exec-card rounded-md overflow-hidden">
+        <div class="px-5 py-4 flex justify-between items-center flex-wrap gap-2" style="border-bottom:1px solid #E5E5E5;">
+          <div>
+            <h3 class="font-bold text-[15px]" style="color:#1A1A1A;">Saldo de Inventario <span class="text-[12px] font-normal ml-1" style="color:#16A34A;">● LIVE</span></h3>
+            <span class="last-update" id="last-update-saldo"></span>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <button onclick="exportCSV('saldo')" class="btn-outline-cyan flex items-center gap-1">
+              <span class="material-symbols-outlined text-[16px]">download</span><span>Exportar</span>
+            </button>
+            <!-- Buscar general -->
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">search</span>
+              <input id="search-saldo" oninput="debouncedFilterSaldo()" onkeydown="if(event.key==='Enter')filterSaldo()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-36" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Buscar...">
+            </div>
+            <!-- Filtro WHS -->
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-2 text-[14px]" style="color:#AAA;">warehouse</span>
+              <input id="filter-whs-saldo" oninput="debouncedFilterSaldo()" onkeydown="if(event.key==='Enter')filterSaldo()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-28" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="WHS...">
+            </div>
+            <!-- Filtro Código -->
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-2 text-[14px]" style="color:#AAA;">qr_code</span>
+              <input id="filter-codigo-saldo" oninput="debouncedFilterSaldo()" onkeydown="if(event.key==='Enter')filterSaldo()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-28" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Cód1, Cód2...">
+            </div>
+            <!-- Filtro Lote -->
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-2 text-[14px]" style="color:#AAA;">tag</span>
+              <input id="filter-lote-saldo" oninput="debouncedFilterSaldo()" onkeydown="if(event.key==='Enter')filterSaldo()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-28" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Lote...">
+            </div>
+            <button onclick="filterSaldo()" class="btn-primary flex items-center gap-1 whitespace-nowrap">
+              <span class="material-symbols-outlined text-[16px]">filter_alt</span> Filtrar
+            </button>
+            <button onclick="clearFilterSaldo()" class="btn-ghost flex items-center gap-1 whitespace-nowrap">
+              <span class="material-symbols-outlined text-[16px]">close</span> Limpiar
+            </button>
+            <button onclick="loadSaldo()" id="btn-saldo" class="flex items-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors" style="color:#D97706;">
+              <span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar
+            </button>
+          </div>
+        </div>
+        <div id="saldo-scroll-inner" class="saldo-scroll overflow-y-auto max-h-[400px] custom-scrollbar" style="will-change:transform">
+          <table class="w-full border-collapse" style="border:1px solid #E5E5E5;">
+            <thead>
+              <tr class="">
+                <th class="font-table-header text-table-header px-3 py-2 text-center w-8" style="border:1px solid #E0E0E0;"><input type="checkbox" id="chk-all-saldo" onchange="toggleAllCheck('tbody-saldo',this.checked)" class="w-4 h-4 accent-white cursor-pointer"></th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">CODIGO</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">DESCRIPCION</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">WHS</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">UBICACION</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">LOTE BPCS</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">LOTE</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">EXPIRA</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">CANTIDAD</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">ESTADO</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-saldo">
+              <tr class="loading-row"><td colspan="8"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Cargando datos desde Google Sheets...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TABLA MOVIMIENTOS -->
+      <div data-section="dashboard movimiento" class="exec-card rounded-md overflow-hidden">
+        <div class="px-5 py-4 flex justify-between items-center flex-wrap gap-2" style="border-bottom:1px solid #E5E5E5;">
+          <div>
+            <h3 class="font-bold text-[15px]" style="color:#1A1A1A;">Movimientos</h3>
+            <span class="last-update" id="last-update-mov"></span>
+          </div>
+          <div class="flex items-center gap-3 flex-wrap justify-end">
+            <div class="flex items-center gap-2">
+              <label class="text-[12px]" style="color:#666;">Desde:</label>
+              <input id="fecha-desde" class="font-label-data text-[12px] rounded-md px-2 py-1 outline-none" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;color-scheme:light;" type="date">
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="text-[12px]" style="color:#666;">Hasta:</label>
+              <input id="fecha-hasta" class="font-label-data text-[12px] rounded-md px-2 py-1 outline-none" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;color-scheme:light;" type="date">
+            </div>
+            <button onclick="exportCSV('mov')" class="btn-outline-cyan flex items-center gap-1">
+              <span class="material-symbols-outlined text-[16px]">download</span><span>Exportar</span>
+            </button>
+            <button onclick="exportMovTRFMAS()" class="btn-ghost flex items-center gap-1 whitespace-nowrap" style="border-color:#D97706;color:#D97706;">
+              <span class="material-symbols-outlined text-[16px]">table_view</span><span>TRFMAS</span>
+            </button>
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">search</span>
+              <input id="search-mov" oninput="debouncedFilterMov()" onkeydown="if(event.key==='Enter')filterMov()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-40" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Buscar...">
+            </div>
+            <button onclick="filterMov()" class="btn-primary flex items-center gap-1 whitespace-nowrap">
+              <span class="material-symbols-outlined text-[16px]">filter_alt</span> Filtrar
+            </button>
+            <button onclick="clearFilterMov()" class="btn-ghost flex items-center gap-1 whitespace-nowrap">
+              <span class="material-symbols-outlined text-[16px]">close</span> Limpiar
+            </button>
+            <button onclick="loadMov()" id="btn-mov" class="flex items-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors" style="color:#D97706;">
+              <span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar
+            </button>
+          </div>
+        </div>
+        <div id="mov-scroll-inner" class="mov-scroll overflow-y-auto max-h-[400px] custom-scrollbar" style="will-change:transform">
+          <table class="w-full border-collapse" style="border:1px solid #E5E5E5;">
+            <thead>
+              <tr class="">
+                <th class="font-table-header text-table-header px-3 py-2 text-center w-8" style="border:1px solid #E0E0E0;"><input type="checkbox" id="chk-all-mov" onchange="toggleAllCheck('tbody-mov',this.checked)" class="w-4 h-4 accent-white cursor-pointer"></th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">FECHA / HORA</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">CODIGO</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">LOTE BPCS</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">UBIC. ORIGEN</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">UBIC. DESTINO</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">CANTIDAD</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">USUARIO</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-mov">
+              <tr class="loading-row"><td colspan="8"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Cargando datos desde Google Sheets...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TABLA ALERTAS -->
+      <div data-section="dashboard saldo" class="exec-card rounded-md overflow-hidden">
+        <div class="px-5 py-4 flex justify-between items-center flex-wrap gap-2" style="border-bottom:1px solid #E5E5E5;">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined" style="color:#D97706;">notification_important</span>
+            <div>
+              <h3 class="font-bold text-[15px]" style="color:#1A1A1A;">Alertas de Vencimiento Criticas</h3>
+              <span class="last-update" id="last-update-alertas"></span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 flex-wrap">
+            <button onclick="exportCSV('alertas')" class="btn-outline-cyan flex items-center gap-1">
+              <span class="material-symbols-outlined text-[16px]">download</span><span>Exportar</span>
+            </button>
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">warehouse</span>
+              <input id="filter-whs-alertas" onkeydown="if(event.key==='Enter')filterAlertas()" oninput="debouncedFilterAlertas()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-28" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="WHS...">
+            </div>
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">search</span>
+              <input id="search-alertas" onkeydown="if(event.key==='Enter')filterAlertas()" oninput="debouncedFilterAlertas()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-40" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Buscar...">
+            </div>
+            <button onclick="filterAlertas()" class="btn-primary flex items-center gap-1 whitespace-nowrap">
+              <span class="material-symbols-outlined text-[16px]">filter_alt</span> Filtrar
+            </button>
+            <button onclick="clearFilterAlertas()" class="btn-ghost flex items-center gap-1 whitespace-nowrap">
+              <span class="material-symbols-outlined text-[16px]">close</span> Limpiar
+            </button>
+            <button onclick="loadSaldo()" id="btn-alertas" class="flex items-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors" style="color:#D97706;">
+              <span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar
+            </button>
+          </div>
+        </div>
+        <div class="overflow-y-auto max-h-[400px] custom-scrollbar">
+          <table class="w-full border-collapse" style="border:1px solid #E5E5E5;">
+            <thead>
+              <tr class="">
+                <th class="font-table-header text-table-header px-3 py-2 text-center w-8" style="border:1px solid #E0E0E0;"><input type="checkbox" id="chk-all-alertas" onchange="toggleAllCheck('tbody-alertas',this.checked)" class="w-4 h-4 accent-white cursor-pointer"></th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">CODIGO</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">DESCRIPCION</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">LOTE</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">WHS</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">UBICACION</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">CANTIDAD</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">FECHA VENCE</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">DIAS REST.</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">ESTADO</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-alertas">
+              <tr class="loading-row"><td colspan="9"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Cargando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column -->
+    <div data-section="dashboard" class="col-span-12 lg:col-span-3 space-y-8">
+      <div class="exec-card p-5 rounded-md">
+        <h3 class="font-bold text-[15px] mb-4" style="color:#1A1A1A;">Estado de Lotes</h3>
+        <div class="relative w-36 h-36 mx-auto mb-6">
+          <canvas id="donut-chart" width="144" height="144"></canvas>
+          <div class="absolute inset-4 rounded-full flex flex-col items-center justify-center pointer-events-none" style="background:#FFFFFF;">
+            <span class="font-black text-[20px]" style="color:#1A1A1A;" id="donut-pct">—</span>
+            <span class="text-[10px] font-mono" style="color:#AAA;">Vigentes</span>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-[13px]" style="color:#1A1A1A;">
+            <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full" style="background:#FFD100;"></div><span>Vigentes</span></div>
+            <span class="font-label-data" style="color:#D97706;" id="legend-vigentes">—</span>
+          </div>
+          <div class="flex items-center justify-between text-[13px]" style="color:#1A1A1A;">
+            <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full" style="background:#00EBFF;"></div><span>Por Vencer</span></div>
+            <span class="font-label-data" style="color:#0891B2;" id="legend-cercanos">—</span>
+          </div>
+          <div class="flex items-center justify-between text-[13px]" style="color:#1A1A1A;">
+            <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full" style="background:#FF4C4C;"></div><span>Vencidos</span></div>
+            <span class="font-label-data" style="color:#DC2626;" id="legend-vencidos">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Consulta Rápida de Lote -->
+      <div class="exec-card p-5 rounded-md">
+        <h3 class="font-bold text-[15px] mb-4" style="color:#1A1A1A;">Consulta Rápida de Lote</h3>
+        <div class="relative flex items-center mb-3">
+          <span class="material-symbols-outlined absolute left-3 text-[16px]" style="color:#AAA;">search</span>
+          <input id="lote-query" onkeydown="if(event.key==='Enter')buscarLote()" class="w-full font-label-data text-[13px] rounded-md pl-9 pr-3 py-2 outline-none" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Digite Lote BPCS...">
+        </div>
+        <button onclick="buscarLote()" class="w-full btn-primary flex items-center justify-center gap-1 mb-3 rounded-md">
+          <span class="material-symbols-outlined text-[16px]">manage_search</span> Buscar
+        </button>
+        <!-- Encabezado info del lote (aparece tras búsqueda) -->
+        <div id="lote-header" class="hidden mb-3 pb-3" style="border-bottom:1px solid #E5E5E5;">
+          <p class="font-label-data text-[11px] uppercase tracking-wide mb-1" style="color:#AAA;">Producto</p>
+          <p class="text-[13px] font-bold leading-tight" style="color:#1A1A1A;" id="lote-desc-val">—</p>
+          <div class="flex gap-4 mt-2">
+            <div>
+              <p class="font-table-header text-table-header" style="color:#AAA;">LOTE FÍSICO</p>
+              <p class="font-label-data text-[13px] font-bold" style="color:#1A1A1A;" id="lote-fisico-val">—</p>
+            </div>
+            <div>
+              <p class="font-table-header text-table-header" style="color:#AAA;">EXPIRACIÓN</p>
+              <p class="font-label-data text-[13px] font-bold" id="lote-expira-val">—</p>
+            </div>
+            <div>
+              <p class="font-table-header text-table-header" style="color:#AAA;">ESTADO</p>
+              <p id="lote-estado-val" class="mt-0.5">—</p>
+            </div>
+          </div>
+        </div>
+        <!-- Tabla de ubicaciones -->
+        <div id="lote-tabla" class="hidden">
+          <p class="font-table-header text-table-header mb-2" style="color:#AAA;">UBICACIONES (<span id="lote-count">0</span>)</p>
+          <div class="overflow-y-auto max-h-48 custom-scrollbar rounded" style="border:1px solid #E5E5E5;">
+            <table class="w-full border-collapse text-[11px]">
+              <thead>
+                <tr class="">
+                  <th class="px-2 py-1.5 text-left font-bold tracking-wide">UBIC.</th>
+                  <th class="px-2 py-1.5 text-left font-bold tracking-wide">WHS</th>
+                  <th class="px-2 py-1.5 text-right font-bold tracking-wide">CANT.</th>
+                </tr>
+              </thead>
+              <tbody id="lote-tbody"></tbody>
+            </table>
+          </div>
+          <div class="flex justify-between items-center mt-2 pt-2" style="border-top:1px solid #E5E5E5;">
+            <span class="font-table-header text-table-header" style="color:#AAA;">TOTAL</span>
+            <span class="font-label-data text-[13px] font-bold" style="color:#D97706;" id="lote-total">—</span>
+          </div>
+        </div>
+        <p id="lote-msg" class="text-[12px] mt-1 hidden" style="color:#888;"></p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECCIÓN REPORTE DE BAJAS -->
+  <div data-section="bajas">
+    <div class="exec-card rounded-md overflow-hidden">
+      <div class="px-5 py-4 flex justify-between items-center flex-wrap gap-3" style="border-bottom:1px solid #E5E5E5;">
+        <div>
+          <h3 class="font-bold text-[15px]" style="color:#1A1A1A;">Reporte de Bajas</h3>
+          <span class="last-update" id="last-update-bajas"></span>
+        </div>
+        <div class="flex items-center gap-3 flex-wrap">
+          <div class="flex items-center gap-2">
+            <label class="text-[12px]" style="color:#666;">Desde:</label>
+            <input id="bajas-desde" type="date" class="font-label-data text-[12px] rounded-md px-2 py-1 outline-none" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;color-scheme:light;">
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-[12px]" style="color:#666;">Hasta:</label>
+            <input id="bajas-hasta" type="date" class="font-label-data text-[12px] rounded-md px-2 py-1 outline-none" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;color-scheme:light;">
+          </div>
+          <button onclick="exportCSV('bajas')" class="btn-outline-cyan flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">download</span><span>Exportar</span>
+          </button>
+          <div class="relative flex items-center">
+            <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">place</span>
+            <input id="filter-destino-bajas" oninput="debouncedFilterBajas()" onkeydown="if(event.key==='Enter')filterBajas()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-32" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Ubic. Destino...">
+          </div>
+          <div class="relative flex items-center">
+            <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">search</span>
+            <input id="search-bajas" oninput="debouncedFilterBajas()" onkeydown="if(event.key==='Enter')filterBajas()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-40" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Buscar...">
+          </div>
+          <button onclick="filterBajas()" class="btn-primary flex items-center gap-1 whitespace-nowrap">
+            <span class="material-symbols-outlined text-[16px]">filter_alt</span> Filtrar
+          </button>
+          <button onclick="clearFilterBajas()" class="btn-ghost flex items-center gap-1 whitespace-nowrap">
+            <span class="material-symbols-outlined text-[16px]">close</span> Limpiar
+          </button>
+          <button onclick="loadBajas()" id="btn-bajas" class="flex items-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors" style="color:#FFD100;">
+            <span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar
+          </button>
+        </div>
+      </div>
+      <div id="bajas-scroll-inner" class="overflow-y-auto max-h-[calc(100vh-280px)] custom-scrollbar" style="will-change:transform">
+        <table class="w-full border-collapse" style="border:1px solid #E5E5E5;">
+          <thead>
+            <tr class="">
+              <th class="font-table-header text-table-header px-3 py-2 text-center w-8" style="border:1px solid #E0E0E0;"><input type="checkbox" id="chk-all-bajas" onchange="toggleAllCheck('tbody-bajas',this.checked)" class="w-4 h-4 accent-white cursor-pointer"></th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">FECHA</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">CODIGO</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">DESCRIPCION</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">EAN13</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">LOTE</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">EXPIRA</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">CANTIDAD</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">BODEGA</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">UBIC. ORIGEN</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">UBIC. DESTINO</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">ESTATUS</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">USUARIO</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-bajas">
+            <tr class="loading-row"><td colspan="12"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Cargando datos desde Google Sheets...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- FAB -->
+<button class="fab fixed bottom-8 right-8 w-14 h-14 rounded-full flex items-center justify-center active:scale-95 transition-all z-50">
+  <span class="material-symbols-outlined text-[28px]">barcode_scanner</span>
+</button>
+
+<script>
+// =============================================
+// CONFIGURACION
+// =============================================
+const URL_SALDO = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQMDxJZ_QVjWKqD44LIy9q_vvBIElkZQBaMTpQEoEI4L7ak7KORfyoCa4jLIMNFpAMOi7FIX-JVP132/pub?gid=273620597&single=true&output=csv';
+const URL_MOV   = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQMDxJZ_QVjWKqD44LIy9q_vvBIElkZQBaMTpQEoEI4L7ak7KORfyoCa4jLIMNFpAMOi7FIX-JVP132/pub?gid=2101441845&single=true&output=csv';
+const URL_BAJAS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQMDxJZ_QVjWKqD44LIy9q_vvBIElkZQBaMTpQEoEI4L7ak7KORfyoCa4jLIMNFpAMOi7FIX-JVP132/pub?gid=868163741&single=true&output=csv';
+const ALERT_DAYS = 90;
+const CACHE_TTL  = 5 * 60 * 1000; // 5 minutos en ms
+
+// ── CACHÉ EN sessionStorage ──────────────────
+// Los datos se guardan con timestamp. Si tienen menos de 5 min, no se vuelven a pedir.
+// Al presionar "Actualizar" se fuerza ignorar el caché.
+function cacheGet(key) {
+  try {
+    const raw = sessionStorage.getItem(key);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) { sessionStorage.removeItem(key); return null; }
+    return data;
+  } catch { return null; }
+}
+function cacheSet(key, data) {
+  try { sessionStorage.setItem(key, JSON.stringify({ ts: Date.now(), data })); } catch {}
+}
+function cacheClear(key) {
+  try { sessionStorage.removeItem(key); } catch {}
+}
+
+async function fetchCSV(url, forceRefresh = false) {
+  const cacheKey = 'csv_' + btoa(url.split('gid=')[1] || url).slice(0, 12);
+
+  // Devolver caché si existe y no se fuerza refresco
+  if (!forceRefresh) {
+    const cached = cacheGet(cacheKey);
+    if (cached) return cached;
+  }
+
+  // Fetch directo a Google Sheets (funciona desde GitHub Pages sin proxy)
+  try {
+    const r = await fetch(url + '&t=' + Date.now(), { signal: AbortSignal.timeout(8000) });
+    if (r.ok) {
+      const text = await r.text();
+      cacheSet(cacheKey, text);
+      return text;
+    }
+  } catch {}
+
+  // Fallback: un solo proxy si el directo falla
+  try {
+    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+    const r = await fetch(proxyUrl, { signal: AbortSignal.timeout(10000) });
+    if (r.ok) {
+      const text = await r.text();
+      if (text && text.length > 10) { cacheSet(cacheKey, text); return text; }
+    }
+  } catch {}
+
+  throw new Error('No se pudo obtener los datos. Verifica tu conexion.');
+}
+
+let dataSaldo = [];
+let dataMov   = [];
+let dataBajas = [];
+
+// =============================================
+// PARSE CSV (manejo de comillas y comas)
+// =============================================
+function parseCSV(text) {
+  const lines = text.trim().split(/\r?\n/);
+  if (lines.length < 2) return { headers: [], rows: [] };
+  const parseRow = (line) => {
+    const result = []; let inQ = false, cur = '';
+    for (let i = 0; i < line.length; i++) {
+      if (line[i] === '"') { inQ = !inQ; }
+      else if (line[i] === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+      else { cur += line[i]; }
+    }
+    result.push(cur.trim());
+    return result;
+  };
+  const headers = parseRow(lines[0]);
+  const rows = lines.slice(1).map(l => parseRow(l));
+  return { headers, rows };
+}
+
+function toObjects(headers, rows) {
+  return rows.map(r => {
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = (r[i] || '').trim());
+    return obj;
+  }).filter(o => Object.values(o).some(v => v !== ''));
+}
+
+function ts() {
+  return 'Actualizado: ' + new Date().toLocaleTimeString('es-PE', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+// =============================================
+// DETECCION AUTOMATICA DE COLUMNAS
+// =============================================
+function detectCol(keys, patterns) {
+  for (const pat of patterns) {
+    const found = keys.find(k => pat.test(k));
+    if (found) return found;
+  }
+  return null;
+}
+
+function getSaldoCols(keys) {
+  // Buscamos el nombre exacto de la columna "SALDO" (limpiando espacios)
+  const colSaldo = keys.find(k => k.trim().toUpperCase() === "SALDO");
+  
+  return {
+    codigo:      detectCol(keys, [/^cod/i, /sku/i, /item/i]) || keys[0],
+    desc:        detectCol(keys, [/desc/i, /nombre/i]) || keys[1],
+    whs:         detectCol(keys, [/whs/i]) || keys[2], 
+    ubic:        detectCol(keys, [/ubic/i, /loc/i]) || keys[3], 
+    lote_bpcs:   detectCol(keys, [/lote bpcs/i]),
+    lote_fisico: detectCol(keys, [/lote fisico/i]),
+    expira:      detectCol(keys, [/expir/i, /fecha/i]) || keys[5],
+    
+    // CORRECCIÓN: Usamos la variable colSaldo directamente
+    cantidad:    colSaldo 
+  };
+}
+  
+function getMovCols(keys) {
+  // Depuración opcional: console.log("Cabeceras de movimientos:", keys);
+  
+  return {
+    fecha:    detectCol(keys, [/fecha/i, /registro/i, /time/i]) || keys[1],
+    codigo:   detectCol(keys, [/^RBRPD$/i, /codigo/i]) || keys[5],
+    
+    // AQUÍ ESTÁ EL CAMBIO:
+    bpcs:     detectCol(keys, [/^RBLOT$/i, /^RCCUS$/i, /bpcs/i]) || keys[2],
+    
+    lote:     null, 
+    origen:   detectCol(keys, [/^RFRLC$/i, /origen/i]) || keys[8],
+    destino:  detectCol(keys, [/^RTOLC$/i, /destino/i, /to/i]) || keys[9],
+    cantidad: detectCol(keys, [/^RQTYT$/i, /cantidad/i, /qty/i]) || keys[7],
+    usuario:  detectCol(keys, [/^RCOM$/i, /usuario/i, /user/i]) || keys[12],
+  };
+}
+
+// =============================================
+// CALCULAR DIAS HASTA VENCIMIENTO
+// =============================================
+function daysToExpiry(str) {
+  if (!str || str === '0') return null; // Ignora ceros o celdas vacías
+  const s = String(str).trim();
+  let d;
+
+  // NUEVO: Soporte para formato YYYYMMDD (como 20230428)
+  if (/^\d{8}$/.test(s)) {
+    const yyyy = s.substring(0, 4);
+    const mm = s.substring(4, 6);
+    const dd = s.substring(6, 8);
+    d = new Date(parseInt(yyyy), parseInt(mm) - 1, parseInt(dd));
+  } 
+  // Formatos anteriores (dd/mm/yy o dd/mm/yyyy)
+  else if (/^\d{2}\/\d{2}\/\d{2}$/.test(s)) {
+    const [dd, mm, yy] = s.split('/');
+    d = new Date(2000 + parseInt(yy), parseInt(mm) - 1, parseInt(dd));
+  } else if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) {
+    const [dd, mm, yyyy] = s.split('/');
+    d = new Date(parseInt(yyyy), parseInt(mm) - 1, parseInt(dd));
+  } else {
+    d = new Date(s);
+  }
+
+  if (!d || isNaN(d.getTime())) return null;
+  
+  const today = new Date(); 
+  today.setHours(0, 0, 0, 0);
+  // Calcula la diferencia en días
+  return Math.floor((d - today) / 86400000);
+}
+
+function statusBadge(days) {
+  if (days === null) return '<span style="color:#707978;font-size:11px;">—</span>';
+  if (days < 0)   return '<span class="badge-error">VENCIDO</span>';
+  if (days === 0) return '<span class="badge-error">HOY</span>';
+  if (days <= 60) return '<span class="badge-error">⚠ ' + days + 'd</span>';
+  if (days <= 90) return '<span class="badge-warn">⚡ ' + days + 'd</span>';
+  return '<span class="badge-ok">OK</span>';
+}
+
+// =============================================
+// CARGAR SALDO
+// =============================================
+async function loadSaldo(forceRefresh = true) {
+  const btn = document.getElementById('btn-saldo');
+  btn.innerHTML = '<span class="material-symbols-outlined spin text-[16px]">sync</span> Cargando...';
+  document.getElementById('tbody-saldo').innerHTML = '<tr class="loading-row"><td colspan="8"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Conectando con Google Sheets...</td></tr>';
+  document.getElementById('tbody-alertas').innerHTML = '<tr class="loading-row"><td colspan="8"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Cargando alertas...</td></tr>';
+
+  try {
+    const text = await fetchCSV(URL_SALDO, forceRefresh);
+    const { headers, rows } = parseCSV(text);
+    invalidarCachesCols();
+    dataSaldo = toObjects(headers, rows);
+    buildSearchIndex('saldo', dataSaldo);
+    renderVirtual('saldo', dataSaldo, renderSaldo);
+    renderAlertas(dataSaldo);
+    updateKPIsAndDonut(dataSaldo);
+    const t = ts();
+    document.getElementById('last-update-saldo').textContent = t;
+    document.getElementById('last-update-alertas').textContent = t;
+    document.getElementById('last-update-global').textContent = t;
+  } catch(e) {
+    const msg = '<tr class="error-row"><td colspan="8">Error al cargar: ' + e.message + '. Verifica que el sheet sea publico.</td></tr>';
+    document.getElementById('tbody-saldo').innerHTML = msg;
+    document.getElementById('tbody-alertas').innerHTML = '<tr class="error-row"><td colspan="8">Error al cargar alertas</td></tr>';
+  }
+  btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar';
+}
+
+// =============================================
+// RENDER SALDO (virtual scroll, fragment rendering)
+// =============================================
+function renderSaldo(data, replace = true) {
+  const tbody = document.getElementById('tbody-saldo');
+  if (!data.length) { 
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="9">Sin saldo en inventario</td></tr>'; 
+    return; 
+  }
+  
+  const cols = getSaldoColsCached(Object.keys(data[0]));
+  const frag = document.createDocumentFragment();
+  
+  data.forEach(row => {
+    const days = daysToExpiry(row[cols.expira]);
+    const rowClass = days !== null && days < 0 ? 'font-medium' : days !== null && days <= ALERT_DAYS ? 'font-medium' : '';
+    const tr = document.createElement('tr');
+    tr.className = 'transition-colors ' + rowClass; tr.style.color = days !== null && days < 0 ? '#DC2626' : days !== null && days <= ALERT_DAYS ? '#B45309' : '#1A1A1A';
+    tr.innerHTML =
+        '<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;"><input type="checkbox" class="row-check w-4 h-4 accent-primary cursor-pointer"></td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.codigo]||'—') + '</td>'
+      + '<td class="px-3 py-3 " style="border:1px solid #E5E5E5;">' + (row[cols.desc]||'—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.whs]||'—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.ubic]||'—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.lote_bpcs]||'—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.lote_fisico]||'—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.expira]||'—') + '</td>'
+      + '<td class="px-3 py-3 text-right font-label-data font-bold " style="border:1px solid #E5E5E5;">' + (row[cols.cantidad]||'0') + '</td>'
+      + '<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;">' + statusBadge(days) + '</td>';
+    frag.appendChild(tr);
+  });
+  if (replace) tbody.innerHTML = '';
+  tbody.appendChild(frag);
+}
+
+// =============================================
+// RENDER ALERTAS (fragment rendering, cached cols)
+// =============================================
+function renderAlertas(data) {
+  const tbody = document.getElementById('tbody-alertas');
+  
+  if (!data.length) { 
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="8">Sin alertas criticas</td></tr>'; 
+    return; 
+  }
+  
+  const cols = getSaldoColsCached(Object.keys(data[0]));
+
+  const alertas = data
+    .map(row => ({ row, days: daysToExpiry(row[cols.expira]) }))
+    .filter(x => {
+      const esCritico = (x.days !== null && x.days <= ALERT_DAYS);
+      const valorWhs = (x.row[cols.whs] || '').toUpperCase();
+      const esExcluida = valorWhs.includes('LF') || valorWhs.includes('OB');
+      return esCritico && !esExcluida;
+    })
+    .sort((a, b) => a.days - b.days);
+
+  // Actualizar KPI y badge superior
+  document.getElementById('kpi-alertas').textContent = alertas.length.toLocaleString();
+  document.getElementById('alert-badge').classList.toggle('hidden', alertas.length === 0);
+
+  if (!alertas.length) {
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="9" style="color:#16A34A">✓ Sin alertas críticas</td></tr>';
+    return;
+  }
+
+  const frag = document.createDocumentFragment();
+  alertas.forEach(({ row, days }) => {
+    const rowClass = '';
+    const diasLabel = days < 0 ? 'VENCIDO (' + Math.abs(days) + 'd)' : days === 0 ? 'HOY' : days + ' dias';
+    const badge = days <= 0 ? '<span class="badge-error">VENCIDO</span>' : days <= 60 ? '<span class="badge-error">CRITICO</span>' : '<span class="badge-warn">PROXIMO</span>';
+    const tr = document.createElement('tr');
+    tr.className = 'transition-colors ' + rowClass; tr.style.color = days !== null && days < 0 ? '#DC2626' : days !== null && days <= ALERT_DAYS ? '#B45309' : '#1A1A1A';
+    tr.innerHTML =
+        '<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;"><input type="checkbox" class="row-check w-4 h-4 accent-primary cursor-pointer"></td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.codigo]||'—') + '</td>'
+      + '<td class="px-3 py-3 " style="border:1px solid #E5E5E5;">' + (row[cols.desc]||'—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.lote_fisico]||'—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.whs]||'—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.ubic]||'—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.cantidad]||'0') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.expira]||'—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data font-bold " style="border:1px solid #E5E5E5;">' + diasLabel + '</td>'
+      + '<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;">' + badge + '</td>';
+    frag.appendChild(tr);
+  });
+  tbody.innerHTML = '';
+  tbody.appendChild(frag);
+}
+  
+// =============================================
+// CARGAR MOVIMIENTOS
+// =============================================
+async function loadMov(forceRefresh = true) {
+  const btn = document.getElementById('btn-mov');
+  btn.innerHTML = '<span class="material-symbols-outlined spin text-[16px]">sync</span> Cargando...';
+  document.getElementById('tbody-mov').innerHTML = '<tr class="loading-row"><td colspan="8"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Conectando con Google Sheets...</td></tr>';
+
+  try {
+    const text = await fetchCSV(URL_MOV, forceRefresh);
+    const { headers, rows } = parseCSV(text);
+    dataMov = toObjects(headers, rows);
+    buildSearchIndex('mov', dataMov);
+    renderVirtual('mov', dataMov, renderMov);
+    document.getElementById('last-update-mov').textContent = ts();
+  } catch(e) {
+    document.getElementById('tbody-mov').innerHTML = '<tr class="error-row"><td colspan="8">Error al cargar movimientos: ' + e.message + '</td></tr>';
+  }
+  btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar';
+}
+
+// =============================================
+// RENDER MOVIMIENTOS (fragment rendering, cached cols)
+// =============================================
+function renderMov(data, replace = true) {
+  const tbody = document.getElementById('tbody-mov');
+  if (!data.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="7">Sin movimientos registrados</td></tr>'; return; }
+  
+  const cols = getMovColsCached(Object.keys(data[0]));
+  const frag = document.createDocumentFragment();
+  
+  data.forEach(row => {
+    const destino = row[cols.destino] || '';
+    const cantidad= row[cols.cantidad] || '';
+    const tr = document.createElement('tr');
+    tr.className = 'transition-colors';
+    tr.innerHTML =
+        `<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;"><input type="checkbox" class="row-check w-4 h-4 accent-primary cursor-pointer"></td>`
+      + `<td class="px-3 py-3 font-label-data whitespace-nowrap " style="border:1px solid #E5E5E5;">${row[cols.fecha]||'—'}</td>`
+      + `<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">${row[cols.codigo]||'—'}</td>`
+      + `<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">${row[cols.bpcs]||'—'}</td>`
+      + `<td class="px-3 py-3 " style="border:1px solid #E5E5E5;">${row[cols.origen]||'—'}</td>`
+      + `<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">${destino||'—'}</td>`
+      + `<td class="px-3 py-3 text-right font-label-data font-bold " style="border:1px solid #E5E5E5;">${cantidad||'0'}</td>`
+      + `<td class="px-3 py-3 " style="border:1px solid #E5E5E5;">${row[cols.usuario]||'—'}</td>`;
+    frag.appendChild(tr);
+  });
+  if (replace) tbody.innerHTML = '';
+  tbody.appendChild(frag);
+}
+
+// =============================================
+// KPIs + DONUT — un solo loop sobre los datos (fix #6 consolidacion de procesos)
+// =============================================
+function updateKPIsAndDonut(data) {
+  if (!data.length) return;
+  const cols = getSaldoColsCached(Object.keys(data[0]));
+  
+  let total = 0, vencidos = 0;
+  let vig = 0, prox = 0, venc = 0;
+
+  data.forEach(row => {
+    let rawQty = (row[cols.cantidad] || '0').toString().trim();
+    let cleanQty = rawQty.replace(/[^\d.,]/g, '');
+    if (cleanQty.includes(',') && cleanQty.includes('.')) {
+      cleanQty = cleanQty.replace(/\./g, '').replace(',', '.');
+    } else if (cleanQty.includes(',')) {
+      cleanQty = cleanQty.replace(',', '.');
+    } else {
+      cleanQty = cleanQty.replace(/\./g, '');
+    }
+    let qty = parseFloat(cleanQty) || 0;
+    total += qty;
+
+    const d = daysToExpiry(row[cols.expira]);
+    if (d !== null && d < 0) { vencidos += qty; venc += Math.abs(qty); }
+    else if (d !== null && d <= ALERT_DAYS) { prox += qty; }
+    else { vig += qty; }
+  });
+
+  // KPIs
+  document.getElementById('kpi-total').textContent      = Math.round(total).toLocaleString('es-PE');
+  document.getElementById('kpi-disponible').textContent = Math.round(total - vencidos).toLocaleString('es-PE');
+  document.getElementById('kpi-bajas').textContent      = Math.round(vencidos).toLocaleString('es-PE');
+
+  // Donut
+  const totalD = (vig + prox + venc) || 1;
+  const pct    = Math.round((vig / totalD) * 100);
+  document.getElementById('donut-pct').textContent        = pct + '%';
+  document.getElementById('legend-vigentes').textContent  = vig.toLocaleString();
+  document.getElementById('legend-cercanos').textContent  = prox.toLocaleString();
+  document.getElementById('legend-vencidos').textContent  = venc.toLocaleString();
+
+  const canvas = document.getElementById('donut-chart');
+  const ctx    = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 144, 144);
+  const segs = [
+    { v: vig, c: '#FFD100' },
+    { v: prox, c: '#00EBFF' },
+    { v: venc, c: '#FF4C4C' }
+  ];
+  let start = -Math.PI / 2;
+  segs.forEach(s => {
+    const sweep = (s.v / totalD) * 2 * Math.PI;
+    if (sweep <= 0) return;
+    ctx.beginPath(); ctx.moveTo(72, 72);
+    ctx.arc(72, 72, 58, start, start + sweep);
+    ctx.closePath(); ctx.fillStyle = s.c; ctx.fill();
+    start += sweep;
+  });
+  ctx.beginPath(); ctx.arc(72, 72, 40, 0, 2 * Math.PI);
+  ctx.fillStyle = '#FFFFFF'; ctx.fill();
+}
+
+// Mantener compatibilidad con llamadas individuales
+function updateKPIs(data)  { /* delegado a updateKPIsAndDonut */ }
+function updateDonut(data) { /* delegado a updateKPIsAndDonut */ }
+
+
+// =============================================
+// CONSULTA RÁPIDA DE LOTE
+// =============================================
+function buscarLote() {
+  const q = document.getElementById('lote-query').value.trim().toLowerCase();
+  const msg      = document.getElementById('lote-msg');
+  const header   = document.getElementById('lote-header');
+  const tabla    = document.getElementById('lote-tabla');
+
+  // Reset
+  header.classList.add('hidden');
+  tabla.classList.add('hidden');
+  msg.classList.add('hidden');
+  msg.textContent = '';
+
+  if (!q) return;
+
+  if (!dataSaldo.length) {
+    msg.textContent = 'Los datos aún no han cargado. Presiona Actualizar.';
+    msg.classList.remove('hidden');
+    return;
+  }
+
+  const cols = getSaldoCols(Object.keys(dataSaldo[0]));
+
+  // Buscar coincidencias exactas por Lote BPCS
+  const matches = dataSaldo.filter(r =>
+    String(r[cols.lote_bpcs] || '').toLowerCase() === q
+  );
+
+  // Si no hay exacta, buscar parcial
+  const results = matches.length
+    ? matches
+    : dataSaldo.filter(r => String(r[cols.lote_bpcs] || '').toLowerCase().includes(q));
+
+  if (!results.length) {
+    msg.textContent = 'No se encontró ningún lote con ese valor.';
+    msg.classList.remove('hidden');
+    return;
+  }
+
+  // Todos los resultados comparten lote físico y expiración (son del mismo BPCS)
+  const first = results[0];
+  const days  = daysToExpiry(first[cols.expira]);
+
+  // Encabezado
+  document.getElementById('lote-desc-val').textContent   = first[cols.desc]        || '—';
+  document.getElementById('lote-fisico-val').textContent = first[cols.lote_fisico]  || '—';
+
+  const expEl = document.getElementById('lote-expira-val');
+  expEl.textContent = first[cols.expira] || '—';
+  expEl.className = 'font-label-data text-[13px] font-bold ' +
+    (''
+     days !== null && days <= 30 ? '' : '');
+
+  document.getElementById('lote-estado-val').innerHTML = statusBadge(days);
+  header.classList.remove('hidden');
+
+  // Tabla de ubicaciones
+  let totalCant = 0;
+  let tbodyHtml = '';
+
+  results.forEach(r => {
+    let rawQty = String(r[cols.cantidad] || '0').replace(/[^\d.,]/g, '');
+    if (rawQty.includes(',') && rawQty.includes('.')) rawQty = rawQty.replace(/\./g,'').replace(',','.');
+    else if (rawQty.includes(',')) rawQty = rawQty.replace(',','.');
+    else rawQty = rawQty.replace(/\./g,'');
+    const qty = parseFloat(rawQty) || 0;
+    totalCant += qty;
+
+    tbodyHtml += '<tr style="border-bottom:1px solid #E5E5E5;">'
+      + '<td class="px-2 py-1.5 font-label-data">' + (r[cols.ubic] || '—') + '</td>'
+      + '<td class="px-2 py-1.5 font-label-data" style="color:#666;">' + (r[cols.whs] || '—') + '</td>'
+      + '<td class="px-2 py-1.5 font-label-data font-bold text-right">' + Math.round(qty).toLocaleString('es-PE') + '</td>'
+      + '</tr>';
+  });
+
+  document.getElementById('lote-tbody').innerHTML = tbodyHtml;
+  document.getElementById('lote-count').textContent = results.length;
+  document.getElementById('lote-total').textContent = Math.round(totalCant).toLocaleString('es-PE');
+  tabla.classList.remove('hidden');
+
+  if (!matches.length) {
+    msg.textContent = 'Búsqueda parcial: ' + results.length + ' resultado(s).';
+    msg.classList.remove('hidden');
+  }
+}
+
+
+function filterSaldo() {
+  if (!dataSaldo.length) { alert('Los datos aun no han cargado. Presiona Actualizar primero.'); return; }
+  const q      = document.getElementById('search-saldo').value.toLowerCase().trim();
+  const whs    = document.getElementById('filter-whs-saldo').value.toLowerCase().trim();
+  const codigoRaw = document.getElementById('filter-codigo-saldo').value.toLowerCase().trim();
+  const lote   = document.getElementById('filter-lote-saldo').value.toLowerCase().trim();
+
+  // Soporte multi-código: separar por coma y limpiar espacios
+  const codigos = codigoRaw ? codigoRaw.split(',').map(c => c.trim()).filter(Boolean) : [];
+
+  if (!q && !whs && !codigos.length && !lote) { renderVirtual('saldo', dataSaldo, renderSaldo); return; }
+
+  const cols = getSaldoColsCached(Object.keys(dataSaldo[0]));
+
+  const filtered = dataSaldo.filter((r, i) => {
+    const coincideTexto  = !q             || _searchIndex.saldo[i].includes(q);
+    const coincideWhs    = !whs           || String(r[cols.whs]         || '').toLowerCase().includes(whs);
+    const valorCodigo    = String(r[cols.codigo] || '').toLowerCase();
+    const coincideCodigo = !codigos.length || codigos.some(c => valorCodigo.includes(c));
+    const coincideLote   = !lote          || String(r[cols.lote_bpcs]   || '').toLowerCase().includes(lote)
+                                          || String(r[cols.lote_fisico] || '').toLowerCase().includes(lote);
+    return coincideTexto && coincideWhs && coincideCodigo && coincideLote;
+  });
+
+  renderVirtual('saldo', filtered, renderSaldo);
+}
+
+function clearFilterSaldo() {
+  document.getElementById('search-saldo').value         = '';
+  document.getElementById('filter-whs-saldo').value     = '';
+  document.getElementById('filter-codigo-saldo').value  = '';
+  document.getElementById('filter-lote-saldo').value    = '';
+  renderVirtual('saldo', dataSaldo, renderSaldo);
+}
+
+function filterMov() {
+  if (!dataMov.length) { alert('Los datos aun no han cargado. Presiona Actualizar primero.'); return; }
+  const q = document.getElementById('search-mov').value.toLowerCase().trim();
+  const fechaDesde = document.getElementById('fecha-desde').value;
+  const fechaHasta = document.getElementById('fecha-hasta').value;
+
+  const cols = getMovColsCached(Object.keys(dataMov[0]));
+  const colFecha = cols.fecha;
+
+  // Usa índice para búsqueda de texto; aplica filtro de fecha solo a resultados que pasan texto
+  let filtered = dataMov.filter((r, i) => {
+    const coincideTexto = !q || _searchIndex.mov[i].includes(q);
+    let cumpleDesde = true, cumpleHasta = true;
+    if ((fechaDesde || fechaHasta) && colFecha) {
+      const fechaRaw = String(r[colFecha] || '').trim();
+      const partes = fechaRaw.split(' ')[0].split('/');
+      let fechaISO = '';
+      if (partes.length === 3 && partes[2].length === 4)
+        fechaISO = `${partes[2]}-${partes[1].padStart(2,'0')}-${partes[0].padStart(2,'0')}`;
+      else if (partes.length === 3 && partes[2].length === 2)
+        fechaISO = `20${partes[2]}-${partes[1].padStart(2,'0')}-${partes[0].padStart(2,'0')}`;
+      cumpleDesde = !fechaDesde || fechaISO >= fechaDesde;
+      cumpleHasta = !fechaHasta || fechaISO <= fechaHasta;
+    }
+    return coincideTexto && cumpleDesde && cumpleHasta;
+  });
+
+  renderVirtual('mov', filtered, renderMov);
+}
+
+function clearFilterMov() {
+  document.getElementById('search-mov').value = '';
+  document.getElementById('fecha-desde').value = '';
+  document.getElementById('fecha-hasta').value = '';
+  renderVirtual('mov', dataMov, renderMov);
+}
+
+function filterAlertas() {
+  if (!dataSaldo.length) { alert('Los datos aun no han cargado. Presiona Actualizar primero.'); return; }
+  const q   = document.getElementById('search-alertas').value.toLowerCase().trim();
+  const whs = document.getElementById('filter-whs-alertas').value.toLowerCase().trim();
+
+  if (!q && !whs) { renderAlertas(dataSaldo); return; }
+
+  const cols = getSaldoColsCached(Object.keys(dataSaldo[0]));
+  renderAlertas(dataSaldo.filter((r, i) => {
+    const coincideTexto = !q  || _searchIndex.saldo[i].includes(q);
+    const coincideWhs   = !whs || String(r[cols.whs] || '').toLowerCase().includes(whs);
+    return coincideTexto && coincideWhs;
+  }));
+}
+
+function clearFilterAlertas() {
+  document.getElementById('search-alertas').value = '';
+  document.getElementById('filter-whs-alertas').value = '';
+  renderAlertas(dataSaldo);
+}
+// =============================================
+// DEBOUNCE — evita render en cada tecla
+// =============================================
+function debounce(fn, ms) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+const debouncedFilterSaldo = debounce(filterSaldo, 250);
+const debouncedFilterMov   = debounce(filterMov, 250);
+
+const debouncedFilterAlertas = debounce(filterAlertas, 250);
+const debouncedFilterBajas   = debounce(filterBajas, 250);
+
+// =============================================
+// BUSQUEDA GLOBAL
+// =============================================
+const debouncedGlobalSearch = debounce(function(q) {
+  if (!q) {
+    renderVirtual('saldo', dataSaldo, renderSaldo);
+    renderVirtual('mov', dataMov, renderMov);
+    renderAlertas(dataSaldo);
+    return;
+  }
+  const ql = q.toLowerCase();
+  const filtSaldo = dataSaldo.filter((_, i) => _searchIndex.saldo[i] && _searchIndex.saldo[i].includes(ql));
+  const filtMov   = dataMov.filter((_, i)   => _searchIndex.mov[i]   && _searchIndex.mov[i].includes(ql));
+  renderVirtual('saldo', filtSaldo, renderSaldo);
+  renderVirtual('mov',   filtMov,   renderMov);
+  renderAlertas(filtSaldo);
+}, 300);
+
+document.getElementById('global-search').addEventListener('input', function() {
+  debouncedGlobalSearch(this.value);
+});
+
+// =============================================
+// VIRTUAL SCROLL — renderiza solo filas visibles (~200 activas)
+// =============================================
+const VIRTUAL_PAGE_SIZE = 200;
+let _vsOffset = { saldo: 0, mov: 0, bajas: 0 };
+let _vsData   = { saldo: [], mov: [], bajas: [] };
+
+function renderVirtual(type, data, renderFn) {
+  _vsData[type]   = data;
+  _vsOffset[type] = 0;
+  renderFn(data.slice(0, VIRTUAL_PAGE_SIZE), true);
+  const container = document.getElementById(
+    type === 'saldo' ? 'saldo-scroll-inner' :
+    type === 'mov'   ? 'mov-scroll-inner'   : 'bajas-scroll-inner'
+  );
+  if (container) {
+    container.onscroll = null;
+    container.onscroll = () => {
+      if (container.scrollTop + container.clientHeight >= container.scrollHeight - 100) {
+        _vsOffset[type] += VIRTUAL_PAGE_SIZE;
+        const next = _vsData[type].slice(_vsOffset[type], _vsOffset[type] + VIRTUAL_PAGE_SIZE);
+        if (next.length) renderFn(next, false);
+      }
+    };
+  }
+}
+
+// =============================================
+// CACHE DE COLUMNAS (evita Object.keys + getSaldoCols repetido)
+// =============================================
+let _saldoColsCache = null;
+let _movColsCache   = null;
+let _bajasColsCache = null;
+
+function getSaldoColsCached(keys) {
+  if (!_saldoColsCache) _saldoColsCache = getSaldoCols(keys);
+  return _saldoColsCache;
+}
+function getMovColsCached(keys) {
+  if (!_movColsCache) _movColsCache = getMovCols(keys);
+  return _movColsCache;
+}
+function getBajasColsCached(keys) {
+  if (!_bajasColsCache) _bajasColsCache = getBajasCols(keys);
+  return _bajasColsCache;
+}
+
+// INVALIDAR cache al recargar datos
+function invalidarCachesCols() {
+  _saldoColsCache = null;
+  _movColsCache   = null;
+  _bajasColsCache = null;
+}
+
+// =============================================
+// INDICE DE BUSQUEDA — evita Object.values() en cada tecla
+// =============================================
+let _searchIndex = { saldo: [], mov: [], bajas: [] };
+
+function buildSearchIndex(type, data) {
+  _searchIndex[type] = data.map(row => Object.values(row).join('\u0000').toLowerCase());
+}
+
+function searchWithIndex(type, q) {
+  return _searchIndex[type].map((str, i) => str.includes(q) ? _vsData[type][i] || null : null).filter(Boolean);
+}
+
+
+function toggleAllCheck(tbodyId, checked) {
+  document.querySelectorAll('#' + tbodyId + ' .row-check').forEach(chk => chk.checked = checked);
+}
+
+// Obtener filas seleccionadas o todas las visibles de un tbody
+function getRowsForExport(tbodyId) {
+  const allRows = Array.from(document.querySelectorAll('#' + tbodyId + ' tr')).filter(tr =>
+    !tr.classList.contains('loading-row') && !tr.classList.contains('error-row')
+  );
+  const selected = allRows.filter(tr => tr.querySelector('.row-check')?.checked);
+  return selected.length > 0 ? selected : allRows;
+}
+
+// =============================================
+// EXPORTAR XLSX
+// =============================================
+function exportCSV(type) {
+  let data, filename, sheetName;
+
+  if (type === 'saldo') {
+    // Exportar desde _vsData.saldo para incluir TODOS los registros filtrados,
+    // no solo los visibles en pantalla (virtual scroll)
+    const checkedRows = Array.from(document.querySelectorAll('#tbody-saldo .row-check:checked'));
+    let source;
+    if (checkedRows.length > 0) {
+      // Si hay checkboxes seleccionados, exportar solo esos (leídos del DOM)
+      source = checkedRows.map(chk => {
+        const tds = chk.closest('tr').querySelectorAll('td');
+        return { CODIGO: tds[1]?.innerText, DESCRIPCION: tds[2]?.innerText, WHS: tds[3]?.innerText,
+                 UBICACION: tds[4]?.innerText, LOTE_BPCS: tds[5]?.innerText, LOTE_FISICO: tds[6]?.innerText,
+                 EXPIRA: tds[7]?.innerText, CANTIDAD: tds[8]?.innerText, ESTADO: tds[9]?.innerText };
+      });
+    } else {
+      // Sin selección: exportar todos los filtrados desde _vsData (completo)
+      const cols = getSaldoColsCached(Object.keys((_vsData.saldo[0] || dataSaldo[0] || {})));
+      source = (_vsData.saldo.length ? _vsData.saldo : dataSaldo).map(row => {
+        const days = daysToExpiry(row[cols.expira]);
+        const estado = days === null ? '—' : days < 0 ? 'VENCIDO' : days === 0 ? 'HOY' : days <= 60 ? 'CRITICO (' + days + 'd)' : days <= 90 ? 'PROXIMO (' + days + 'd)' : 'OK';
+        return { CODIGO: row[cols.codigo]||'—', DESCRIPCION: row[cols.desc]||'—', WHS: row[cols.whs]||'—',
+                 UBICACION: row[cols.ubic]||'—', LOTE_BPCS: row[cols.lote_bpcs]||'—', LOTE_FISICO: row[cols.lote_fisico]||'—',
+                 EXPIRA: row[cols.expira]||'—', CANTIDAD: row[cols.cantidad]||'0', ESTADO: estado };
+      });
+    }
+    data = source;
+    filename = 'saldo_inventario.xlsx';
+    sheetName = 'Saldo';
+  } else if (type === 'mov') {
+    const rows = getRowsForExport('tbody-mov');
+    data = rows.map(tr => {
+      const tds = tr.querySelectorAll('td');
+      return { FECHA: tds[1]?.innerText, CODIGO: tds[2]?.innerText, LOTE_BPCS: tds[3]?.innerText,
+               ORIGEN: tds[4]?.innerText, DESTINO: tds[5]?.innerText,
+               CANTIDAD: tds[6]?.innerText, USUARIO: tds[7]?.innerText };
+    });
+    filename = 'movimientos_filtrados.xlsx';
+    sheetName = 'Movimientos';
+  } else if (type === 'alertas') {
+    const rows = getRowsForExport('tbody-alertas');
+    data = rows.map(tr => {
+      const tds = tr.querySelectorAll('td');
+      return { CODIGO: tds[1]?.innerText, DESCRIPCION: tds[2]?.innerText, LOTE: tds[3]?.innerText,
+               WHS: tds[4]?.innerText, UBICACION: tds[5]?.innerText, CANTIDAD: tds[6]?.innerText,
+               FECHA_VENCE: tds[7]?.innerText, DIAS_RESTANTES: tds[8]?.innerText, ESTADO: tds[9]?.innerText };
+    });
+    filename = 'alertas_vencimiento.xlsx';
+    sheetName = 'Alertas';
+  } else if (type === 'bajas') {
+    const rows = getRowsForExport('tbody-bajas');
+    data = rows.map(tr => {
+      const tds = tr.querySelectorAll('td');
+      return { FECHA: tds[1]?.innerText, CODIGO: tds[2]?.innerText, DESCRIPCION: tds[3]?.innerText,
+               EAN13: tds[4]?.innerText, LOTE: tds[5]?.innerText, EXPIRA: tds[6]?.innerText,
+               CANTIDAD: tds[7]?.innerText, BODEGA: tds[8]?.innerText, UBIC_ORIGEN: tds[9]?.innerText,
+               UBIC_DESTINO: tds[10]?.innerText, ESTATUS: tds[11]?.innerText, USUARIO: tds[12]?.innerText };
+    });
+    filename = 'reporte_bajas.xlsx';
+    sheetName = 'Bajas';
+  }
+
+  if (!data || data.length === 0) { alert('No hay datos para exportar.'); return; }
+
+  const ws = XLSX.utils.json_to_sheet(data);
+  const cols = Object.keys(data[0]);
+  ws['!cols'] = cols.map(col => {
+    const maxLen = Math.max(col.length, ...data.map(r => String(r[col] || '').length));
+    return { wch: Math.min(maxLen + 2, 50) };
+  });
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  for (let C = range.s.c; C <= range.e.c; C++) {
+    const cellAddr = XLSX.utils.encode_cell({ r: 0, c: C });
+    if (!ws[cellAddr]) continue;
+    ws[cellAddr].s = {
+      font:      { bold: true, color: { rgb: 'FFFFFF' } },
+      fill:      { fgColor: { rgb: '1A1A1A' } },
+      alignment: { horizontal: 'center', vertical: 'center' }
+    };
+  }
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  XLSX.writeFile(wb, filename);
+}
+
+// =============================================
+// EXPORTAR MOVIMIENTOS — FORMATO TRFMAS (columnas originales del Sheet)
+// =============================================
+function exportMovTRFMAS() {
+  if (!_vsData.mov.length && !dataMov.length) {
+    alert('No hay datos de movimientos para exportar. Presiona Actualizar primero.');
+    return;
+  }
+
+  // Columnas a excluir
+  const EXCLUIR    = ['ID', 'REGISTRO', 'COMENTARIO'];
+  // Columnas tipo TEXTO (aparece apóstrofe en barra de fórmulas, invisible en celda)
+  const TIPO_TEXTO = ['RBPRD', 'RBLOT', 'RFRLC', 'RTOLC', 'RRSNC', 'RCOM', 'RFRWH', 'RTOWH'];
+  // Columnas tipo NÚMERO
+  const TIPO_NUM   = ['RCCUS', 'RQTYT', 'RNDOC'];
+
+  const allVisibleRows = Array.from(document.querySelectorAll('#tbody-mov tr')).filter(tr =>
+    !tr.classList.contains('loading-row') && !tr.classList.contains('error-row')
+  );
+  const selectedRows = allVisibleRows.filter(tr => tr.querySelector('.row-check')?.checked);
+
+  let source;
+  if (selectedRows.length > 0) {
+    source = selectedRows.map(tr => {
+      const idx = allVisibleRows.indexOf(tr);
+      return _vsData.mov[idx] || null;
+    }).filter(Boolean);
+  } else {
+    source = _vsData.mov.length ? _vsData.mov : dataMov;
+  }
+
+  if (!source.length) { alert('No hay datos para exportar.'); return; }
+
+  // Filtrar cabeceras excluidas
+  const allHeaders = Object.keys(source[0]);
+  const headers    = allHeaders.filter(h => !EXCLUIR.includes(h.trim().toUpperCase()));
+
+  // Construir worksheet celda por celda para controlar tipo exacto
+  const ws = {};
+
+  // Fila de cabeceras
+  headers.forEach((h, C) => {
+    const addr = XLSX.utils.encode_cell({ r: 0, c: C });
+    ws[addr] = {
+      t: 's', v: h,
+      s: {
+        font:      { bold: true, color: { rgb: 'FFFFFF' } },
+        fill:      { fgColor: { rgb: '1A1A1A' } },
+        alignment: { horizontal: 'center', vertical: 'center' }
+      }
+    };
+  });
+
+  // Filas de datos
+  source.forEach((row, rowIdx) => {
+    headers.forEach((h, C) => {
+      const key  = h.trim().toUpperCase();
+      const raw  = String(row[h] || '').trim();
+      const addr = XLSX.utils.encode_cell({ r: rowIdx + 1, c: C });
+
+      if (TIPO_NUM.includes(key)) {
+        const num = parseFloat(raw.replace(/,/g, '')) || 0;
+        ws[addr] = { t: 'n', v: num };
+      } else {
+        // t:'s' = texto puro — Excel pone apóstrofe invisible en barra de fórmulas
+        ws[addr] = { t: 's', v: raw };
+      }
+    });
+  });
+
+  // Rango total
+  ws['!ref'] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: source.length, c: headers.length - 1 } });
+
+  // Ancho de columnas automático
+  ws['!cols'] = headers.map(h => {
+    let maxLen = h.length;
+    source.forEach(row => { const len = String(row[h] || '').length; if (len > maxLen) maxLen = len; });
+    return { wch: Math.min(maxLen + 2, 50) };
+  });
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'TRFMAS');
+  XLSX.writeFile(wb, 'TRFMAS.xls');
+}
+
+// Pre-indexar elementos por sección UNA sola vez (evita querySelectorAll repetido)
+const _secEls = {};
+function _initSecEls() {
+  document.querySelectorAll('[data-section]').forEach(el => {
+    el.getAttribute('data-section').trim().split(/\s+/).forEach(s => {
+      if (!_secEls[s]) _secEls[s] = [];
+      _secEls[s].push(el);
+    });
+  });
+}
+
+let _activeSection = null;
+
+function showSection(section) {
+  if (section === _activeSection) return;
+
+  // Construir índice la primera vez
+  if (!Object.keys(_secEls).length) _initSecEls();
+
+  const prev = _activeSection;
+  _activeSection = section;
+
+  // 1. body data-active (para los overrides CSS de grid)
+  document.body.setAttribute('data-active', section);
+
+  // 2. Nav links
+  document.querySelectorAll('nav a[data-nav]').forEach(l => {
+    const isActive = l.getAttribute('data-nav') === section;
+    l.style.color = isActive ? '#1A1A1A' : '#AAA';
+    l.classList.toggle('font-bold',               isActive);
+    l.classList.toggle('border-r-4',              isActive);
+    l.classList.toggle('border-primary',          isActive);
+    l.style.background = isActive ? '#FFD100' : '';
+    
+  });
+
+  // 3. Mostrar/ocultar: solo toca los elementos que realmente cambian
+  //    Oculta los del grupo anterior, muestra los del nuevo
+  const allSections = Object.keys(_secEls);
+  allSections.forEach(s => {
+    const show = s === section;
+    _secEls[s].forEach(el => {
+      el.style.display = show ? '' : 'none';
+    });
+  });
+  // Los elementos que aparecen en MÚLTIPLES secciones (ej: "dashboard saldo")
+  // deben quedar visibles si la sección activa es cualquiera de las suyas
+  document.querySelectorAll('[data-section*=" "]').forEach(el => {
+    const secs = el.getAttribute('data-section').trim().split(/\s+/);
+    el.style.display = secs.includes(section) ? '' : 'none';
+  });
+
+  // 4. Título
+  const titles = {
+    dashboard:  { h: 'Resumen de Saldo (Stock)',              p: 'Estado actual de stock y movimientos logisticos.' },
+    saldo:      { h: 'Saldo de Inventario',                   p: 'Consulta y filtra el stock actual por producto, lote o ubicacion.' },
+    movimiento: { h: 'Movimientos',                           p: 'Historial de movimientos logisticos registrados.' },
+    bajas:      { h: 'Reporte de Bajas',                      p: 'Productos dados de baja del inventario.' },
+  };
+  const t = titles[section] || titles.dashboard;
+  const h2 = document.querySelector('h2.font-headline-lg');
+  const p  = h2 && h2.nextElementSibling;
+  if (h2) h2.textContent = t.h;
+  if (p)  p.textContent  = t.p;
+}
+
+// Inicializar en dashboard
+showSection('dashboard');
+
+
+// =============================================
+// REPORTE DE BAJAS
+// =============================================
+async function loadBajas(forceRefresh = true) {
+  const btn = document.getElementById('btn-bajas');
+  btn.innerHTML = '<span class="material-symbols-outlined spin text-[16px]">sync</span> Cargando...';
+  document.getElementById('tbody-bajas').innerHTML = '<tr class="loading-row"><td colspan="12"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Conectando con Google Sheets...</td></tr>';
+
+  try {
+    const text = await fetchCSV(URL_BAJAS, forceRefresh);
+    const { headers, rows } = parseCSV(text);
+    dataBajas = toObjects(headers, rows);
+    buildSearchIndex('bajas', dataBajas);
+    renderVirtual('bajas', dataBajas, renderBajas);
+    document.getElementById('last-update-bajas').textContent = ts();
+  } catch(e) {
+    document.getElementById('tbody-bajas').innerHTML = '<tr class="error-row"><td colspan="12">Error al cargar: ' + e.message + '</td></tr>';
+  }
+  btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar';
+}
+
+function getBajasCols(keys) {
+  return {
+    fecha:    detectCol(keys, [/^fecha/i, /date/i])           || keys[0],
+    codigo:   detectCol(keys, [/^cod/i, /sku/i, /item/i])     || keys[1],
+    desc:     detectCol(keys, [/desc/i, /nombre/i, /produc/i])|| keys[2],
+    ean:      detectCol(keys, [/ean/i, /barcode/i, /upc/i])   || keys[3],
+    lote:     detectCol(keys, [/^lote$/i, /lote.fis/i])       || keys[4],
+    expira:   detectCol(keys, [/expir/i, /venc/i])            || keys[5],
+    cantidad: detectCol(keys, [/cant/i, /qty/i, /amount/i])   || keys[6],
+    bodega:   detectCol(keys, [/bodega/i, /whs/i])            || keys[7],
+    origen:   detectCol(keys, [/origen/i, /from/i])           || keys[8],
+    destino:  detectCol(keys, [/destino/i, /to\b/i])          || keys[9],
+    estatus:  detectCol(keys, [/estatus/i, /status/i, /estado/i]) || keys[10],
+    usuario:  detectCol(keys, [/usuario/i, /user/i])          || keys[11],
+  };
+}
+
+function renderBajas(data, replace = true) {
+  const tbody = document.getElementById('tbody-bajas');
+  if (!data.length) {
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="12">Sin registros de bajas</td></tr>';
+    return;
+  }
+  const cols = getBajasColsCached(Object.keys(data[0]));
+  const frag = document.createDocumentFragment();
+  data.forEach(row => {
+    const days = daysToExpiry(row[cols.expira]);
+    const rowClass = '';
+    const tr = document.createElement('tr');
+    tr.className = 'transition-colors ' + rowClass; tr.style.color = days !== null && days < 0 ? '#DC2626' : days !== null && days <= ALERT_DAYS ? '#B45309' : '#1A1A1A';
+    tr.innerHTML =
+        '<td class="px-3 py-2 text-center " style="border:1px solid #E5E5E5;"><input type="checkbox" class="row-check w-4 h-4 accent-primary cursor-pointer"></td>'
+      + '<td class="px-3 py-2 font-label-data whitespace-nowrap " style="border:1px solid #E5E5E5;">' + (row[cols.fecha]    || '—') + '</td>'
+      + '<td class="px-3 py-2 font-label-data " style="border:1px solid #E5E5E5;">'                   + (row[cols.codigo]   || '—') + '</td>'
+      + '<td class="px-3 py-2 " style="border:1px solid #E5E5E5;">'                                   + (row[cols.desc]     || '—') + '</td>'
+      + '<td class="px-3 py-2 font-label-data " style="border:1px solid #E5E5E5;">'                   + (row[cols.ean]      || '—') + '</td>'
+      + '<td class="px-3 py-2 font-label-data " style="border:1px solid #E5E5E5;">'                   + (row[cols.lote]     || '—') + '</td>'
+      + '<td class="px-3 py-2 font-label-data " style="border:1px solid #E5E5E5;">'                   + (row[cols.expira]   || '—') + '</td>'
+      + '<td class="px-3 py-2 font-label-data font-bold text-right " style="border:1px solid #E5E5E5;">' + (row[cols.cantidad] || '0') + '</td>'
+      + '<td class="px-3 py-2 font-label-data " style="border:1px solid #E5E5E5;">'                   + (row[cols.bodega]   || '—') + '</td>'
+      + '<td class="px-3 py-2 font-label-data " style="border:1px solid #E5E5E5;">'                   + (row[cols.origen]   || '—') + '</td>'
+      + '<td class="px-3 py-2 font-label-data " style="border:1px solid #E5E5E5;">'                   + (row[cols.destino]  || '—') + '</td>'
+      + '<td class="px-3 py-2 text-center " style="border:1px solid #E5E5E5;">'                       + (row[cols.estatus]  || '—') + '</td>'
+      + '<td class="px-3 py-2 " style="border:1px solid #E5E5E5;">'                                   + (row[cols.usuario]  || '—') + '</td>';
+    frag.appendChild(tr);
+  });
+  if (replace) tbody.innerHTML = '';
+  tbody.appendChild(frag);
+}
+
+function filterBajas() {
+  if (!dataBajas.length) { alert('Los datos aun no han cargado. Presiona Actualizar primero.'); return; }
+  const q          = document.getElementById('search-bajas').value.trim().toLowerCase();
+  const destino    = document.getElementById('filter-destino-bajas').value.trim().toLowerCase();
+  const fechaDesde = document.getElementById('bajas-desde').value;
+  const fechaHasta = document.getElementById('bajas-hasta').value;
+  const cols       = getBajasColsCached(Object.keys(dataBajas[0]));
+  const colFecha   = cols.fecha;
+
+  const filtered = dataBajas.filter((r, i) => {
+    const coincideTexto   = !q       || _searchIndex.bajas[i].includes(q);
+    const coincideDestino = !destino || String(r[cols.destino] || '').toLowerCase().includes(destino);
+    let cumpleDesde = true, cumpleHasta = true;
+    if ((fechaDesde || fechaHasta) && colFecha) {
+      const fechaRaw = String(r[colFecha] || '').trim();
+      const partes = fechaRaw.split(' ')[0].split('/');
+      let fechaISO = '';
+      if (partes.length === 3 && partes[2].length === 4)
+        fechaISO = `${partes[2]}-${partes[1].padStart(2,'0')}-${partes[0].padStart(2,'0')}`;
+      else if (partes.length === 3 && partes[2].length === 2)
+        fechaISO = `20${partes[2]}-${partes[1].padStart(2,'0')}-${partes[0].padStart(2,'0')}`;
+      cumpleDesde = !fechaDesde || fechaISO >= fechaDesde;
+      cumpleHasta = !fechaHasta || fechaISO <= fechaHasta;
+    }
+    return coincideTexto && coincideDestino && cumpleDesde && cumpleHasta;
+  });
+  renderVirtual('bajas', filtered, renderBajas);
+}
+
+function clearFilterBajas() {
+  document.getElementById('search-bajas').value         = '';
+  document.getElementById('filter-destino-bajas').value = '';
+  document.getElementById('bajas-desde').value          = '';
+  document.getElementById('bajas-hasta').value          = '';
+  renderVirtual('bajas', dataBajas, renderBajas);
+}
+
+
+// Carga progresiva: saldo primero (tab activo), luego mov y bajas en background
+async function cargarTodo(forceRefresh = false) {
+  // Saldo es lo primero que el usuario ve — cargarlo antes
+  await loadSaldo(forceRefresh);
+  // Mov y Bajas en paralelo, pero sin bloquear el UI
+  Promise.allSettled([
+    loadMov(forceRefresh),
+    loadBajas(forceRefresh)
+  ]);
+}
+// Solo auto-refresh si la pestaña está activa (evita refreshes innecesarios)
+function autoRefresh() {
+  if (!document.hidden) cargarTodo(true);
+}
+cargarTodo(false); // primera carga: usa caché si hay
+setInterval(autoRefresh, 600000); // auto-refresco inteligente: solo si pestaña activa
+
+// =============================================
+// MODAL CAMPANILLA Y USUARIO
+// =============================================
+function mostrarAlertas() {
+  const alertas = document.querySelectorAll('#tbody-alertas tr:not(.loading-row):not(.error-row)');
+  const count = alertas.length;
+  const msg = count > 0
+    ? `<span style="color:#DC2626;font-size:28px;font-weight:700">${count}</span><br><span style="font-size:13px;color:#333">producto${count !== 1 ? 's' : ''} con alerta de vencimiento activa</span><br><br><span style="font-size:12px;color:#666">Ir a <b>Alertas Críticas</b> para ver el detalle.</span>`
+    : `<span style="color:#16A34A;font-size:28px;font-weight:700">✓</span><br><span style="font-size:13px;color:#333">Sin alertas críticas activas</span>`;
+  mostrarModal('🔔 Alertas de Vencimiento', msg);
+}
+
+function mostrarInfoApp() {
+  const msg = `<div style="text-align:center;padding:8px 0">
+    <div style="font-size:40px;margin-bottom:8px">👷</div>
+    <div style="font-size:18px;font-weight:700;color:#1A1A1A;margin-bottom:4px">Creado por Omar Bernales</div>
+    <div style="font-size:12px;color:#666;margin-bottom:16px">Odan89</div>
+    <div style="font-size:12px;color:#333;background:#F5F5F5;border-radius:6px;padding:10px 14px;text-align:left;line-height:1.8">
+      📦 <b>Sistema:</b> Salon Logic WMS<br>
+      🔗 <b>Fuente:</b> Google Sheets en tiempo real<br>
+      ⏱ <b>Refresco:</b> Automático cada 5 min<br>
+      📁 <b>Archivo:</b> Unidireccional (solo lectura)
+    </div>
+  </div>`;
+  mostrarModal('ℹ️ Información del Sistema', msg);
+}
+
+function mostrarModal(titulo, contenido) {
+  document.getElementById('wms-modal-title').innerHTML = titulo;
+  document.getElementById('wms-modal-body').innerHTML = contenido;
+  document.getElementById('wms-modal').classList.remove('hidden');
+}
+
+function cerrarModal() {
+  document.getElementById('wms-modal').classList.add('hidden');
+}
+
+</script>
+<!-- Modal general -->
+<div id="wms-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center">
+  <div onclick="cerrarModal()" class="absolute inset-0 bg-black/40"></div>
+  <div class="relative rounded-xl shadow-2xl w-full max-w-sm mx-4 p-6" style="background:#FFFFFF;border:1px solid #E5E5E5;">
+    <div class="flex justify-between items-center mb-4">
+      <h3 id="wms-modal-title" class="font-bold text-[15px]" style="color:#1A1A1A;"></h3>
+      <button onclick="cerrarModal()" class="transition-colors" style="color:#999;">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div id="wms-modal-body" class="text-center" style="color:#333;"></div>
+    <button onclick="cerrarModal()" class="btn-primary mt-5 w-full py-2 rounded-md text-[13px]">Cerrar</button>
+  </div>
+</div>
+
+</body>
+</html>
