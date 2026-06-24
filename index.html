@@ -1165,8 +1165,7 @@ function buscarLote() {
   const expEl = document.getElementById('lote-expira-val');
   expEl.textContent = first[cols.expira] || '—';
   expEl.className = 'font-label-data text-[13px] font-bold ' +
-    (''
-     days !== null && days <= 30 ? '' : '');
+    (days !== null && days <= 30 ? 'text-red-600' : '');
 
   document.getElementById('lote-estado-val').innerHTML = statusBadge(days);
   header.classList.remove('hidden');
