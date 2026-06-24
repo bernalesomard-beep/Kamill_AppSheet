@@ -718,31 +718,30 @@ function cacheClear(key) {
 async function fetchCSV(url, forceRefresh = false) {
   const cacheKey = 'csv_' + btoa(url.split('gid=')[1] || url).slice(0, 12);
 
-  // Devolver caché si existe y no se fuerza refresco
   if (!forceRefresh) {
     const cached = cacheGet(cacheKey);
     if (cached) return cached;
   }
 
-  // Fetch directo a Google Sheets (funciona desde GitHub Pages sin proxy)
-  try {
-    const r = await fetch(url + '&t=' + Date.now(), { signal: AbortSignal.timeout(8000) });
-    if (r.ok) {
-      const text = await r.text();
-      cacheSet(cacheKey, text);
-      return text;
-    }
-  } catch {}
+  const proxies = [
+    u => u + '&t=' + Date.now(),
+    u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+    u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+    u => `https://proxy.cors.sh/${u}`,
+  ];
 
-  // Fallback: un solo proxy si el directo falla
-  try {
-    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
-    const r = await fetch(proxyUrl, { signal: AbortSignal.timeout(10000) });
-    if (r.ok) {
-      const text = await r.text();
-      if (text && text.length > 10) { cacheSet(cacheKey, text); return text; }
-    }
-  } catch {}
+  for (const buildUrl of proxies) {
+    try {
+      const r = await fetch(buildUrl(url), { signal: AbortSignal.timeout(10000) });
+      if (r.ok) {
+        const text = await r.text();
+        if (text && text.length > 10) {
+          cacheSet(cacheKey, text);
+          return text;
+        }
+      }
+    } catch {}
+  }
 
   throw new Error('No se pudo obtener los datos. Verifica tu conexion.');
 }
