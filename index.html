@@ -15,10 +15,10 @@
       extend: {
         "colors": {
           /* ── Logistics Executive Palette ── */
-          "primary":                "#FFD100",   /* Golden Yellow  */
-          "on-primary":             "#0D0D0D",
-          "primary-container":      "#3A2F00",
-          "on-primary-container":   "#FFD100",
+          "primary":                "#2563EB",   /* Golden Yellow  */
+          "on-primary":             "#FFFFFF",
+          "primary-container":      "#1E3A6E",
+          "on-primary-container":   "#93C5FD",
           "secondary":              "#00EBFF",   /* Cyan / Tertiary */
           "on-secondary":           "#0D0D0D",
           "secondary-container":    "#003840",
@@ -51,10 +51,10 @@
           "outline":                "#CCCCCC",
           "outline-variant":        "#E5E5E5",
           /* ── Fixed / misc ── */
-          "surface-tint":           "#FFD100",
-          "primary-fixed":          "#3A2F00",
-          "primary-fixed-dim":      "#FFD100",
-          "on-primary-fixed":       "#FFD100",
+          "surface-tint":           "#2563EB",
+          "primary-fixed":          "#1E3A6E",
+          "primary-fixed-dim":      "#2563EB",
+          "on-primary-fixed":       "#93C5FD",
           "secondary-fixed":        "#003840",
           "secondary-fixed-dim":    "#00EBFF"
         },
@@ -88,21 +88,21 @@
   /* ── Scrollbar ── */
   .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
   .custom-scrollbar::-webkit-scrollbar-track { background: #F0F0F0; border-radius: 4px; }
-  .custom-scrollbar::-webkit-scrollbar-thumb { background: #FFD100; border-radius: 4px; }
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #00EBFF; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #2563EB; border-radius: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #60A5FA; }
 
   /* ── Sticky table headers ── */
   thead th {
     position: sticky; top: 0; z-index: 10;
-    background: #FFD100;
-    color: #1A1A1A;
-    border-bottom: 2px solid #E5B800;
+    background: #1E3A6E;
+    color: #E2E8F0;
+    border-bottom: 2px solid #2563EB;
   }
 
   /* ── Table rows ── */
   tbody tr:nth-child(even) { background: #FAFAFA; }
   tbody tr:nth-child(odd)  { background: #FFFFFF; }
-  tbody tr:hover { background: #FFF8E0; }
+  tbody tr:hover { background: #EFF6FF; }
   tbody td { border-color: #E8E8E8 !important; color: #1A1A1A; }
 
   /* ── Animations ── */
@@ -128,24 +128,24 @@
 
   /* ── KPI cards accent line ── */
   .kpi-card { position: relative; overflow: hidden; }
-  .kpi-card::before { content:''; position:absolute; top:0; left:0; width:3px; height:100%; background: #FFD100; }
+  .kpi-card::before { content:''; position:absolute; top:0; left:0; width:3px; height:100%; background: #2563EB; }
   .kpi-card.cyan::before { background: #00EBFF; }
   .kpi-card.red::before  { background: #FF4C4C; }
 
   /* ── Nav active indicator ── */
   a[data-nav].active-nav {
-    color: #1A1A1A !important;
-    background: #FFD100 !important;
-    border-right: 3px solid #E5B800;
+    color: #FFFFFF !important;
+    background: #2563EB !important;
+    border-right: 3px solid #1D4ED8;
   }
 
   /* ── Primary button ── */
   .btn-primary {
-    background: #FFD100; color: #1A1A1A; font-weight: 700;
+    background: #2563EB; color: #FFFFFF; font-weight: 700;
     border-radius: 4px; padding: 4px 14px; font-size: 12px;
     transition: all .15s;
   }
-  .btn-primary:hover { background: #E5B800; }
+  .btn-primary:hover { background: #1D4ED8; }
 
   /* ── Secondary/outline button ── */
   .btn-outline-cyan {
@@ -175,13 +175,13 @@
     border-color: #CCCCCC !important;
     color-scheme: light;
   }
-  input:focus { border-color: #FFD100 !important; box-shadow: 0 0 0 3px rgba(255,209,0,.2) !important; }
+  input:focus { border-color: #2563EB !important; box-shadow: 0 0 0 3px rgba(37,99,235,.15) !important; }
 
   /* ── Sidebar ── */
-  aside { background: #1A1A1A !important; border-right: 1px solid #2A2A2A !important; }
+  aside { background: #0F172A !important; border-right: 1px solid #1E293B !important; }
 
   /* ── Top header ── */
-  header { background: #1A1A1A !important; border-bottom: 2px solid #FFD100 !important; }
+  header { background: #0F172A !important; border-bottom: 2px solid #2563EB !important; }
 
   /* ── Cards ── */
   .exec-card {
@@ -190,7 +190,7 @@
     border-radius: 6px;
     transition: border-color .2s, box-shadow .2s;
   }
-  .exec-card:hover { border-color: #FFD100; box-shadow: 0 2px 12px rgba(255,209,0,.12); }
+  .exec-card:hover { border-color: #2563EB; box-shadow: 0 2px 12px rgba(37,99,235,.10); }
 
   /* ── Section full-width overrides ── */
   body[data-active="saldo"] .tables-col,
@@ -201,7 +201,7 @@
   body[data-active="movimiento"] .mov-scroll { max-height: calc(100vh - 280px); }
 
   /* ── Yellow text accent ── */
-  .text-accent { color: #FFD100; }
+  .text-accent { color: #2563EB; }
   .text-cyan   { color: #00EBFF; }
 
   /* ── Donut chart container ── */
@@ -209,10 +209,10 @@
 
   /* ── FAB ── */
   .fab {
-    background: #FFD100; color: #1A1A1A;
-    box-shadow: 0 4px 20px rgba(0,0,0,.15);
+    background: #2563EB; color: #FFFFFF;
+    box-shadow: 0 4px 20px rgba(37,99,235,.30);
   }
-  .fab:hover { background: #E5B800; box-shadow: 0 6px 28px rgba(0,0,0,.2); transform: scale(1.06); }
+  .fab:hover { background: #1D4ED8; box-shadow: 0 6px 28px rgba(37,99,235,.40); transform: scale(1.06); }
 
   /* ── Separator lines with cyan ── */
   .section-divider { border-color: #1E1E1E; }
@@ -221,38 +221,46 @@
 <body class="bg-background text-on-background">
 
 <!-- SideNavBar -->
-<aside class="h-screen fixed left-0 top-0 flex flex-col py-6 z-50 w-40" style="background:#1A1A1A;border-right:1px solid #2A2A2A;">
+<aside class="h-screen fixed left-0 top-0 flex flex-col py-6 z-50 w-40" style="background:#0F172A;border-right:1px solid #1E293B;">
   <div class="px-4 mb-6 flex flex-col items-center gap-2">
     <div class="w-16 h-16 flex items-center justify-center rounded-lg overflow-hidden " style="border:1px solid #E5E5E5;">
       <img alt="Logo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4NJMHsdDlCg52Ed-P7Bo9t37SoLculsDk4KdYXQhHemRTogxYJNjhTr76JWZ2w9Uwkw7nSEQ9hVWVm4b20NK7QLxgHJvsKk_Vjm8xdHC7-XkqmeUOTuxi52Kb_W_MqJvRi667SqA33Ex--nVyZ-5xua_PcW9Ps3Ta36tI9rid285R6OtPAquWsrHu5VGmij2ABJ0THXPxPz5XDRMolTUzKQEhqlVPgddeGmCKTWfWFuQq-HfO-7r9H512MSPYThjnYpY">
     </div>
     <div class="text-center">
-      <h1 class="font-semibold text-[13px] leading-none" style="color:#FFD100;">Omar Bernales</h1>
-      <p class="text-[10px] mt-0.5" style="color:#AAA;">Odan89</p>
+      <h1 class="font-semibold text-[13px] leading-none" style="color:#93C5FD;">Omar Bernales</h1>
+      <p class="text-[10px] mt-0.5" style="color:#94A3B8;">Odan89</p>
     </div>
-    <div class="w-full border-t mt-1" style="border-color:#2A2A2A;"></div>
+    <div class="w-full border-t mt-1" style="border-color:#1E293B;"></div>
   </div>
   <nav class="flex-1 space-y-0.5 px-2">
     <a data-nav="dashboard" onclick="showSection('dashboard')" class="flex flex-col items-center gap-1 px-2 py-3 font-bold active-nav transition-colors duration-200 cursor-pointer" href="#">
       <span class="material-symbols-outlined text-[20px]">dashboard</span>
       <span class="text-[10px] font-semibold tracking-wide uppercase">Dashboard</span>
     </a>
-    <a data-nav="saldo" onclick="showSection('saldo')" class="flex flex-col items-center gap-1 px-2 py-3 transition-colors duration-200 cursor-pointer" style="color:#AAA;" href="#">
+    <a data-nav="saldo" onclick="showSection('saldo')" class="flex flex-col items-center gap-1 px-2 py-3 transition-colors duration-200 cursor-pointer" style="color:#94A3B8;" href="#">
       <span class="material-symbols-outlined text-[20px]">inventory_2</span>
       <span class="text-[10px] font-semibold tracking-wide uppercase">Saldo</span>
     </a>
-    <a data-nav="movimiento" onclick="showSection('movimiento')" class="flex flex-col items-center gap-1 px-2 py-3 transition-colors duration-200 cursor-pointer" style="color:#AAA;" href="#">
+    <a data-nav="movimiento" onclick="showSection('movimiento')" class="flex flex-col items-center gap-1 px-2 py-3 transition-colors duration-200 cursor-pointer" style="color:#94A3B8;" href="#">
       <span class="material-symbols-outlined text-[20px]">history</span>
       <span class="text-[10px] font-semibold tracking-wide uppercase">Movimiento</span>
     </a>
-    <a data-nav="bajas" onclick="showSection('bajas')" class="flex flex-col items-center gap-1 px-2 py-3 transition-colors duration-200 cursor-pointer" style="color:#AAA;" href="#">
+    <a data-nav="bajas" onclick="showSection('bajas')" class="flex flex-col items-center gap-1 px-2 py-3 transition-colors duration-200 cursor-pointer" style="color:#94A3B8;" href="#">
       <span class="material-symbols-outlined text-[20px]">trending_down</span>
       <span class="text-[10px] font-semibold tracking-wide uppercase text-center leading-tight">Rpt. Bajas</span>
     </a>
+    <a data-nav="articulos" onclick="showSection('articulos')" class="flex flex-col items-center gap-1 px-2 py-3 transition-colors duration-200 cursor-pointer" style="color:#94A3B8;" href="#">
+      <span class="material-symbols-outlined text-[20px]">category</span>
+      <span class="text-[10px] font-semibold tracking-wide uppercase text-center leading-tight">Artículos</span>
+    </a>
+    <a data-nav="anaqueles" onclick="showSection('anaqueles')" class="flex flex-col items-center gap-1 px-2 py-3 transition-colors duration-200 cursor-pointer" style="color:#94A3B8;" href="#">
+      <span class="material-symbols-outlined text-[20px]">shelves</span>
+      <span class="text-[10px] font-semibold tracking-wide uppercase text-center leading-tight">Anaqueles</span>
+    </a>
   </nav>
   <div class="px-3 pb-2">
-    <div class="w-full border-t mb-3" style="border-color:#2A2A2A;"></div>
-    <div class="text-center text-[9px] font-mono" style="color:#555;letter-spacing:.06em;">Saldo Kamill v2</div>
+    <div class="w-full border-t mb-3" style="border-color:#1E293B;"></div>
+    <div class="text-center text-[9px] font-mono" style="color:#475569;letter-spacing:.06em;">Saldo Kamill v2</div>
   </div>
 </aside>
 
@@ -260,17 +268,17 @@
 <header class="flex justify-between items-center h-14 px-8 fixed top-0 z-40 w-[calc(100%-10rem)] ml-40" style="background:#1A1A1A;border-bottom:2px solid #FFD100;">
   <div class="flex items-center gap-4 flex-1">
     <div class="relative w-full max-w-md">
-      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px]" style="color:#AAA;">search</span>
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px]" style="color:#94A3B8;">search</span>
       <input id="global-search" class="w-full rounded-md pl-10 pr-4 py-2 text-[13px] outline-none transition-all border" placeholder="Filtrar por producto, lote o ubicacion..." style="background:#2A2A2A;border-color:#3A3A3A;color:#F5F5F5;font-family:'JetBrains Mono',monospace;">
     </div>
   </div>
   <div class="flex items-center gap-5">
     <div class="flex items-center gap-4 pr-5" style="border-right:1px solid #3A3A3A;">
-      <button onclick="mostrarAlertas()" class="relative transition-all" style="color:#AAA;" title="Alertas de vencimiento">
+      <button onclick="mostrarAlertas()" class="relative transition-all" style="color:#94A3B8;" title="Alertas de vencimiento">
         <span class="material-symbols-outlined text-[22px]">notifications</span>
         <span id="alert-badge" class="absolute -top-1 -right-1 w-2 h-2 rounded-full hidden" style="background:#EF4444;"></span>
       </button>
-      <button onclick="mostrarInfoApp()" class="transition-all" style="color:#AAA;" title="Información del sistema">
+      <button onclick="mostrarInfoApp()" class="transition-all" style="color:#94A3B8;" title="Información del sistema">
         <span class="material-symbols-outlined text-[22px]">account_circle</span>
       </button>
     </div>
@@ -284,7 +292,7 @@
   <!-- Header -->
   <div data-section="dashboard" class="mb-6 flex justify-between items-end flex-wrap gap-2">
     <div>
-      <p class="text-[11px] font-mono uppercase tracking-widest mb-1" style="color:#AAA;">Sistema de Gestión de Inventario</p>
+      <p class="text-[11px] font-mono uppercase tracking-widest mb-1" style="color:#94A3B8;">Sistema de Gestión de Inventario</p>
       <h2 class="font-black text-[28px] leading-none" style="color:#1A1A1A;letter-spacing:-.02em;">Resumen de Saldo <span style="color:#FFD100;font-weight:800;">&amp; Stock</span></h2>
       <p class="text-[13px] mt-1" style="color:#666;">Estado actual de stock y movimientos logísticos en tiempo real.</p>
     </div>
@@ -299,13 +307,13 @@
     <div class="kpi-card exec-card p-5 rounded-md">
       <div class="flex justify-between items-start mb-3">
         <div class="p-1.5 rounded" style="background:#FFF8D0;">
-          <span class="material-symbols-outlined text-[20px]" style="color:#FFD100;">inventory_2</span>
+          <span class="material-symbols-outlined text-[20px]" style="color:#2563EB;">inventory_2</span>
         </div>
         <span class="text-[10px] font-black tracking-widest uppercase" style="color:#888;">Stock Total</span>
       </div>
       <div class="mt-4">
         <p class="font-black text-[34px] leading-none" style="color:#1A1A1A;" id="kpi-total">—</p>
-        <p class="text-[11px] mt-1.5 font-mono" style="color:#AAA;">Unidades en sistema</p>
+        <p class="text-[11px] mt-1.5 font-mono" style="color:#94A3B8;">Unidades en sistema</p>
       </div>
     </div>
     <div class="kpi-card cyan exec-card p-5 rounded-md">
@@ -317,7 +325,7 @@
       </div>
       <div class="mt-4">
         <p class="font-black text-[34px] leading-none" style="color:#0891B2;" id="kpi-disponible">—</p>
-        <p class="text-[11px] mt-1.5 font-mono" style="color:#AAA;">Lotes vigentes</p>
+        <p class="text-[11px] mt-1.5 font-mono" style="color:#94A3B8;">Lotes vigentes</p>
       </div>
     </div>
     <div class="kpi-card red exec-card p-5 rounded-md">
@@ -329,19 +337,19 @@
       </div>
       <div class="mt-4">
         <p class="font-black text-[34px] leading-none" style="color:#DC2626;" id="kpi-bajas">—</p>
-        <p class="text-[11px] mt-1.5 font-mono" style="color:#AAA;">Requieren acción</p>
+        <p class="text-[11px] mt-1.5 font-mono" style="color:#94A3B8;">Requieren acción</p>
       </div>
     </div>
     <div class="kpi-card exec-card p-5 rounded-md" style="border-left:none;">
       <div class="flex justify-between items-start mb-3">
         <div class="p-1.5 rounded" style="background:#FFF8D0;">
-          <span class="material-symbols-outlined text-[20px]" style="color:#FFD100;">visibility</span>
+          <span class="material-symbols-outlined text-[20px]" style="color:#2563EB;">visibility</span>
         </div>
         <span class="text-[10px] font-black tracking-widest uppercase" style="color:#888;">Alertas</span>
       </div>
       <div class="mt-4">
-        <p class="font-black text-[34px] leading-none" style="color:#D97706;" id="kpi-alertas">—</p>
-        <p class="text-[11px] mt-1.5 font-mono" style="color:#AAA;">Próx. a vencer (&lt;90d)</p>
+        <p class="font-black text-[34px] leading-none" style="color:#2563EB;" id="kpi-alertas">—</p>
+        <p class="text-[11px] mt-1.5 font-mono" style="color:#94A3B8;">Próx. a vencer (&lt;90d)</p>
       </div>
     </div>
   </div>
@@ -363,22 +371,22 @@
             </button>
             <!-- Buscar general -->
             <div class="relative flex items-center">
-              <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">search</span>
+              <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#94A3B8;">search</span>
               <input id="search-saldo" oninput="debouncedFilterSaldo()" onkeydown="if(event.key==='Enter')filterSaldo()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-36" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Buscar...">
             </div>
             <!-- Filtro WHS -->
             <div class="relative flex items-center">
-              <span class="material-symbols-outlined absolute left-2 text-[14px]" style="color:#AAA;">warehouse</span>
+              <span class="material-symbols-outlined absolute left-2 text-[14px]" style="color:#94A3B8;">warehouse</span>
               <input id="filter-whs-saldo" oninput="debouncedFilterSaldo()" onkeydown="if(event.key==='Enter')filterSaldo()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-28" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="WHS...">
             </div>
             <!-- Filtro Código -->
             <div class="relative flex items-center">
-              <span class="material-symbols-outlined absolute left-2 text-[14px]" style="color:#AAA;">qr_code</span>
+              <span class="material-symbols-outlined absolute left-2 text-[14px]" style="color:#94A3B8;">qr_code</span>
               <input id="filter-codigo-saldo" oninput="debouncedFilterSaldo()" onkeydown="if(event.key==='Enter')filterSaldo()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-28" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Cód1, Cód2...">
             </div>
             <!-- Filtro Lote -->
             <div class="relative flex items-center">
-              <span class="material-symbols-outlined absolute left-2 text-[14px]" style="color:#AAA;">tag</span>
+              <span class="material-symbols-outlined absolute left-2 text-[14px]" style="color:#94A3B8;">tag</span>
               <input id="filter-lote-saldo" oninput="debouncedFilterSaldo()" onkeydown="if(event.key==='Enter')filterSaldo()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-28" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Lote...">
             </div>
             <button onclick="filterSaldo()" class="btn-primary flex items-center gap-1 whitespace-nowrap">
@@ -387,7 +395,7 @@
             <button onclick="clearFilterSaldo()" class="btn-ghost flex items-center gap-1 whitespace-nowrap">
               <span class="material-symbols-outlined text-[16px]">close</span> Limpiar
             </button>
-            <button onclick="loadSaldo()" id="btn-saldo" class="flex items-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors" style="color:#D97706;">
+            <button onclick="loadSaldo()" id="btn-saldo" class="flex items-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors" style="color:#2563EB;">
               <span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar
             </button>
           </div>
@@ -396,7 +404,7 @@
           <table class="w-full border-collapse" style="border:1px solid #E5E5E5;">
             <thead>
               <tr class="">
-                <th class="font-table-header text-table-header px-3 py-2 text-center w-8" style="border:1px solid #E0E0E0;"><input type="checkbox" id="chk-all-saldo" onchange="toggleAllCheck('tbody-saldo',this.checked)" class="w-4 h-4 accent-white cursor-pointer"></th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center w-8" style="border:1px solid #E0E0E0;"><input type="checkbox" id="chk-all-saldo" onchange="toggleAllCheck('tbody-saldo',this.checked)" class="w-4 h-4 accent-blue-200 cursor-pointer"></th>
                 <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">CODIGO</th>
                 <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">DESCRIPCION</th>
                 <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">WHS</th>
@@ -438,7 +446,7 @@
               <span class="material-symbols-outlined text-[16px]">table_view</span><span>TRFMAS</span>
             </button>
             <div class="relative flex items-center">
-              <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">search</span>
+              <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#94A3B8;">search</span>
               <input id="search-mov" oninput="debouncedFilterMov()" onkeydown="if(event.key==='Enter')filterMov()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-40" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Buscar...">
             </div>
             <button onclick="filterMov()" class="btn-primary flex items-center gap-1 whitespace-nowrap">
@@ -447,7 +455,7 @@
             <button onclick="clearFilterMov()" class="btn-ghost flex items-center gap-1 whitespace-nowrap">
               <span class="material-symbols-outlined text-[16px]">close</span> Limpiar
             </button>
-            <button onclick="loadMov()" id="btn-mov" class="flex items-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors" style="color:#D97706;">
+            <button onclick="loadMov()" id="btn-mov" class="flex items-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors" style="color:#2563EB;">
               <span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar
             </button>
           </div>
@@ -456,7 +464,7 @@
           <table class="w-full border-collapse" style="border:1px solid #E5E5E5;">
             <thead>
               <tr class="">
-                <th class="font-table-header text-table-header px-3 py-2 text-center w-8" style="border:1px solid #E0E0E0;"><input type="checkbox" id="chk-all-mov" onchange="toggleAllCheck('tbody-mov',this.checked)" class="w-4 h-4 accent-white cursor-pointer"></th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center w-8" style="border:1px solid #E0E0E0;"><input type="checkbox" id="chk-all-mov" onchange="toggleAllCheck('tbody-mov',this.checked)" class="w-4 h-4 accent-blue-200 cursor-pointer"></th>
                 <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">FECHA / HORA</th>
                 <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">CODIGO</th>
                 <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">LOTE BPCS</th>
@@ -477,7 +485,7 @@
       <div data-section="dashboard saldo" class="exec-card rounded-md overflow-hidden">
         <div class="px-5 py-4 flex justify-between items-center flex-wrap gap-2" style="border-bottom:1px solid #E5E5E5;">
           <div class="flex items-center gap-3">
-            <span class="material-symbols-outlined" style="color:#D97706;">notification_important</span>
+            <span class="material-symbols-outlined" style="color:#2563EB;">notification_important</span>
             <div>
               <h3 class="font-bold text-[15px]" style="color:#1A1A1A;">Alertas de Vencimiento Criticas</h3>
               <span class="last-update" id="last-update-alertas"></span>
@@ -488,11 +496,11 @@
               <span class="material-symbols-outlined text-[16px]">download</span><span>Exportar</span>
             </button>
             <div class="relative flex items-center">
-              <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">warehouse</span>
+              <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#94A3B8;">warehouse</span>
               <input id="filter-whs-alertas" onkeydown="if(event.key==='Enter')filterAlertas()" oninput="debouncedFilterAlertas()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-28" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="WHS...">
             </div>
             <div class="relative flex items-center">
-              <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">search</span>
+              <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#94A3B8;">search</span>
               <input id="search-alertas" onkeydown="if(event.key==='Enter')filterAlertas()" oninput="debouncedFilterAlertas()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-40" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Buscar...">
             </div>
             <button onclick="filterAlertas()" class="btn-primary flex items-center gap-1 whitespace-nowrap">
@@ -501,7 +509,7 @@
             <button onclick="clearFilterAlertas()" class="btn-ghost flex items-center gap-1 whitespace-nowrap">
               <span class="material-symbols-outlined text-[16px]">close</span> Limpiar
             </button>
-            <button onclick="loadSaldo()" id="btn-alertas" class="flex items-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors" style="color:#D97706;">
+            <button onclick="loadSaldo()" id="btn-alertas" class="flex items-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors" style="color:#2563EB;">
               <span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar
             </button>
           </div>
@@ -510,7 +518,7 @@
           <table class="w-full border-collapse" style="border:1px solid #E5E5E5;">
             <thead>
               <tr class="">
-                <th class="font-table-header text-table-header px-3 py-2 text-center w-8" style="border:1px solid #E0E0E0;"><input type="checkbox" id="chk-all-alertas" onchange="toggleAllCheck('tbody-alertas',this.checked)" class="w-4 h-4 accent-white cursor-pointer"></th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center w-8" style="border:1px solid #E0E0E0;"><input type="checkbox" id="chk-all-alertas" onchange="toggleAllCheck('tbody-alertas',this.checked)" class="w-4 h-4 accent-blue-200 cursor-pointer"></th>
                 <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">CODIGO</th>
                 <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">DESCRIPCION</th>
                 <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">LOTE</th>
@@ -539,13 +547,13 @@
           <canvas id="donut-chart" width="144" height="144"></canvas>
           <div class="absolute inset-4 rounded-full flex flex-col items-center justify-center pointer-events-none" style="background:#FFFFFF;">
             <span class="font-black text-[20px]" style="color:#1A1A1A;" id="donut-pct">—</span>
-            <span class="text-[10px] font-mono" style="color:#AAA;">Vigentes</span>
+            <span class="text-[10px] font-mono" style="color:#94A3B8;">Vigentes</span>
           </div>
         </div>
         <div class="space-y-2">
           <div class="flex items-center justify-between text-[13px]" style="color:#1A1A1A;">
-            <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full" style="background:#FFD100;"></div><span>Vigentes</span></div>
-            <span class="font-label-data" style="color:#D97706;" id="legend-vigentes">—</span>
+            <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full" style="background:#2563EB;"></div><span>Vigentes</span></div>
+            <span class="font-label-data" style="color:#2563EB;" id="legend-vigentes">—</span>
           </div>
           <div class="flex items-center justify-between text-[13px]" style="color:#1A1A1A;">
             <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full" style="background:#00EBFF;"></div><span>Por Vencer</span></div>
@@ -562,7 +570,7 @@
       <div class="exec-card p-5 rounded-md">
         <h3 class="font-bold text-[15px] mb-4" style="color:#1A1A1A;">Consulta Rápida de Lote</h3>
         <div class="relative flex items-center mb-3">
-          <span class="material-symbols-outlined absolute left-3 text-[16px]" style="color:#AAA;">search</span>
+          <span class="material-symbols-outlined absolute left-3 text-[16px]" style="color:#94A3B8;">search</span>
           <input id="lote-query" onkeydown="if(event.key==='Enter')buscarLote()" class="w-full font-label-data text-[13px] rounded-md pl-9 pr-3 py-2 outline-none" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Digite Lote BPCS...">
         </div>
         <button onclick="buscarLote()" class="w-full btn-primary flex items-center justify-center gap-1 mb-3 rounded-md">
@@ -570,26 +578,26 @@
         </button>
         <!-- Encabezado info del lote (aparece tras búsqueda) -->
         <div id="lote-header" class="hidden mb-3 pb-3" style="border-bottom:1px solid #E5E5E5;">
-          <p class="font-label-data text-[11px] uppercase tracking-wide mb-1" style="color:#AAA;">Producto</p>
+          <p class="font-label-data text-[11px] uppercase tracking-wide mb-1" style="color:#94A3B8;">Producto</p>
           <p class="text-[13px] font-bold leading-tight" style="color:#1A1A1A;" id="lote-desc-val">—</p>
           <div class="flex gap-4 mt-2">
             <div>
-              <p class="font-table-header text-table-header" style="color:#AAA;">LOTE FÍSICO</p>
+              <p class="font-table-header text-table-header" style="color:#94A3B8;">LOTE FÍSICO</p>
               <p class="font-label-data text-[13px] font-bold" style="color:#1A1A1A;" id="lote-fisico-val">—</p>
             </div>
             <div>
-              <p class="font-table-header text-table-header" style="color:#AAA;">EXPIRACIÓN</p>
+              <p class="font-table-header text-table-header" style="color:#94A3B8;">EXPIRACIÓN</p>
               <p class="font-label-data text-[13px] font-bold" id="lote-expira-val">—</p>
             </div>
             <div>
-              <p class="font-table-header text-table-header" style="color:#AAA;">ESTADO</p>
+              <p class="font-table-header text-table-header" style="color:#94A3B8;">ESTADO</p>
               <p id="lote-estado-val" class="mt-0.5">—</p>
             </div>
           </div>
         </div>
         <!-- Tabla de ubicaciones -->
         <div id="lote-tabla" class="hidden">
-          <p class="font-table-header text-table-header mb-2" style="color:#AAA;">UBICACIONES (<span id="lote-count">0</span>)</p>
+          <p class="font-table-header text-table-header mb-2" style="color:#94A3B8;">UBICACIONES (<span id="lote-count">0</span>)</p>
           <div class="overflow-y-auto max-h-48 custom-scrollbar rounded" style="border:1px solid #E5E5E5;">
             <table class="w-full border-collapse text-[11px]">
               <thead>
@@ -603,8 +611,8 @@
             </table>
           </div>
           <div class="flex justify-between items-center mt-2 pt-2" style="border-top:1px solid #E5E5E5;">
-            <span class="font-table-header text-table-header" style="color:#AAA;">TOTAL</span>
-            <span class="font-label-data text-[13px] font-bold" style="color:#D97706;" id="lote-total">—</span>
+            <span class="font-table-header text-table-header" style="color:#94A3B8;">TOTAL</span>
+            <span class="font-label-data text-[13px] font-bold" style="color:#2563EB;" id="lote-total">—</span>
           </div>
         </div>
         <p id="lote-msg" class="text-[12px] mt-1 hidden" style="color:#888;"></p>
@@ -634,11 +642,11 @@
             <span class="material-symbols-outlined text-[16px]">download</span><span>Exportar</span>
           </button>
           <div class="relative flex items-center">
-            <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">place</span>
+            <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#94A3B8;">place</span>
             <input id="filter-destino-bajas" oninput="debouncedFilterBajas()" onkeydown="if(event.key==='Enter')filterBajas()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-32" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Ubic. Destino...">
           </div>
           <div class="relative flex items-center">
-            <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">search</span>
+            <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#94A3B8;">search</span>
             <input id="search-bajas" oninput="debouncedFilterBajas()" onkeydown="if(event.key==='Enter')filterBajas()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-40" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Buscar...">
           </div>
           <button onclick="filterBajas()" class="btn-primary flex items-center gap-1 whitespace-nowrap">
@@ -647,7 +655,7 @@
           <button onclick="clearFilterBajas()" class="btn-ghost flex items-center gap-1 whitespace-nowrap">
             <span class="material-symbols-outlined text-[16px]">close</span> Limpiar
           </button>
-          <button onclick="loadBajas()" id="btn-bajas" class="flex items-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors" style="color:#FFD100;">
+          <button onclick="loadBajas()" id="btn-bajas" class="flex items-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors" style="color:#2563EB;">
             <span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar
           </button>
         </div>
@@ -656,7 +664,7 @@
         <table class="w-full border-collapse" style="border:1px solid #E5E5E5;">
           <thead>
             <tr class="">
-              <th class="font-table-header text-table-header px-3 py-2 text-center w-8" style="border:1px solid #E0E0E0;"><input type="checkbox" id="chk-all-bajas" onchange="toggleAllCheck('tbody-bajas',this.checked)" class="w-4 h-4 accent-white cursor-pointer"></th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center w-8" style="border:1px solid #E0E0E0;"><input type="checkbox" id="chk-all-bajas" onchange="toggleAllCheck('tbody-bajas',this.checked)" class="w-4 h-4 accent-blue-200 cursor-pointer"></th>
               <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">FECHA</th>
               <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">CODIGO</th>
               <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">DESCRIPCION</th>
@@ -679,6 +687,110 @@
     </div>
   </div>
 
+  <!-- SECCIÓN MAESTRA DE ARTÍCULOS -->
+  <div data-section="articulos">
+    <div class="exec-card rounded-md overflow-hidden">
+      <div class="px-5 py-4 flex justify-between items-center flex-wrap gap-3" style="border-bottom:1px solid #E5E5E5;">
+        <div>
+          <h3 class="font-bold text-[15px]" style="color:#1A1A1A;">Maestra de Artículos</h3>
+          <span class="last-update" id="last-update-articulos"></span>
+        </div>
+        <div class="flex items-center gap-3 flex-wrap">
+          <button onclick="exportCSV('articulos')" class="btn-outline-cyan flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">download</span><span>Exportar</span>
+          </button>
+          <div class="relative flex items-center">
+            <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">search</span>
+            <input id="search-articulos" oninput="debouncedFilterArticulos()" onkeydown="if(event.key==='Enter')filterArticulos()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-48" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Buscar código, descripción...">
+          </div>
+          <button onclick="filterArticulos()" class="btn-primary flex items-center gap-1 whitespace-nowrap">
+            <span class="material-symbols-outlined text-[16px]">filter_alt</span> Filtrar
+          </button>
+          <button onclick="clearFilterArticulos()" class="btn-ghost flex items-center gap-1 whitespace-nowrap">
+            <span class="material-symbols-outlined text-[16px]">close</span> Limpiar
+          </button>
+          <button onclick="loadArticulos()" id="btn-articulos" class="flex items-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors" style="color:#2563EB;">
+            <span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar
+          </button>
+        </div>
+      </div>
+      <div class="overflow-y-auto max-h-[calc(100vh-280px)] custom-scrollbar" style="will-change:transform">
+        <table class="w-full border-collapse" style="border:1px solid #E5E5E5;">
+          <thead>
+            <tr>
+              <th class="font-table-header text-table-header px-3 py-2 text-center w-8" style="border:1px solid #E0E0E0;"><input type="checkbox" id="chk-all-articulos" onchange="toggleAllCheck('tbody-articulos',this.checked)" class="w-4 h-4 accent-blue-600 cursor-pointer"></th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">CÓDIGO</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left" style="border:1px solid #E0E0E0;">DESCRIPCIÓN</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">EAN / UPC</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">CATEGORÍA</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">UNIDAD</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-right whitespace-nowrap" style="border:1px solid #E0E0E0;">PESO (kg)</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">ESTADO</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-articulos">
+            <tr class="loading-row"><td colspan="8"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Cargando datos desde Google Sheets...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN MAESTRA DE ANAQUELES -->
+  <div data-section="anaqueles">
+    <div class="exec-card rounded-md overflow-hidden">
+      <div class="px-5 py-4 flex justify-between items-center flex-wrap gap-3" style="border-bottom:1px solid #E5E5E5;">
+        <div>
+          <h3 class="font-bold text-[15px]" style="color:#1A1A1A;">Maestra de Anaqueles</h3>
+          <span class="last-update" id="last-update-anaqueles"></span>
+        </div>
+        <div class="flex items-center gap-3 flex-wrap">
+          <button onclick="exportCSV('anaqueles')" class="btn-outline-cyan flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">download</span><span>Exportar</span>
+          </button>
+          <div class="relative flex items-center">
+            <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">warehouse</span>
+            <input id="filter-whs-anaqueles" oninput="debouncedFilterAnaqueles()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-28" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="WHS...">
+          </div>
+          <div class="relative flex items-center">
+            <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">search</span>
+            <input id="search-anaqueles" oninput="debouncedFilterAnaqueles()" onkeydown="if(event.key==='Enter')filterAnaqueles()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-40" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Buscar ubicación...">
+          </div>
+          <button onclick="filterAnaqueles()" class="btn-primary flex items-center gap-1 whitespace-nowrap">
+            <span class="material-symbols-outlined text-[16px]">filter_alt</span> Filtrar
+          </button>
+          <button onclick="clearFilterAnaqueles()" class="btn-ghost flex items-center gap-1 whitespace-nowrap">
+            <span class="material-symbols-outlined text-[16px]">close</span> Limpiar
+          </button>
+          <button onclick="loadAnaqueles()" id="btn-anaqueles" class="flex items-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors" style="color:#2563EB;">
+            <span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar
+          </button>
+        </div>
+      </div>
+      <div class="overflow-y-auto max-h-[calc(100vh-280px)] custom-scrollbar" style="will-change:transform">
+        <table class="w-full border-collapse" style="border:1px solid #E5E5E5;">
+          <thead>
+            <tr>
+              <th class="font-table-header text-table-header px-3 py-2 text-center w-8" style="border:1px solid #E0E0E0;"><input type="checkbox" id="chk-all-anaqueles" onchange="toggleAllCheck('tbody-anaqueles',this.checked)" class="w-4 h-4 accent-blue-600 cursor-pointer"></th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">WHS</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">UBICACIÓN</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">ZONA</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">PASILLO</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">NIVEL</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-right whitespace-nowrap" style="border:1px solid #E0E0E0;">CAP. MAX.</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">TIPO</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">ESTADO</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-anaqueles">
+            <tr class="loading-row"><td colspan="9"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Cargando datos desde Google Sheets...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
 </main>
 
 <!-- FAB -->
@@ -693,6 +805,8 @@
 const URL_SALDO = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vREnptY5onM9KVFslXKx_3aFSaLIVBgNSZxcMKiiZ6WpgxACTSoxnyhyGS8784QjaDcIwDS5szwIXs4/pub?gid=273620597&single=true&output=csv';
 const URL_MOV   = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vREnptY5onM9KVFslXKx_3aFSaLIVBgNSZxcMKiiZ6WpgxACTSoxnyhyGS8784QjaDcIwDS5szwIXs4/pub?gid=2101441845&single=true&output=csv';
 const URL_BAJAS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vREnptY5onM9KVFslXKx_3aFSaLIVBgNSZxcMKiiZ6WpgxACTSoxnyhyGS8784QjaDcIwDS5szwIXs4/pub?gid=868163741&single=true&output=csv';
+const URL_ARTICULOS = ''; // Pega aquí la URL CSV de tu hoja Maestra de Artículos
+const URL_ANAQUELES = ''; // Pega aquí la URL CSV de tu hoja Maestra de Anaqueles
 const ALERT_DAYS = 90;
 const CACHE_TTL  = 5 * 60 * 1000; // 5 minutos en ms
 
@@ -922,7 +1036,7 @@ function renderSaldo(data, replace = true) {
     const tr = document.createElement('tr');
     tr.className = 'transition-colors ' + rowClass; tr.style.color = days !== null && days < 0 ? '#DC2626' : days !== null && days <= ALERT_DAYS ? '#B45309' : '#1A1A1A';
     tr.innerHTML =
-        '<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;"><input type="checkbox" class="row-check w-4 h-4 accent-primary cursor-pointer"></td>'
+        '<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;"><input type="checkbox" class="row-check w-4 h-4 accent-blue-600 cursor-pointer"></td>'
       + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.codigo]||'—') + '</td>'
       + '<td class="px-3 py-3 " style="border:1px solid #E5E5E5;">' + (row[cols.desc]||'—') + '</td>'
       + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.whs]||'—') + '</td>'
@@ -978,7 +1092,7 @@ function renderAlertas(data) {
     const tr = document.createElement('tr');
     tr.className = 'transition-colors ' + rowClass; tr.style.color = days !== null && days < 0 ? '#DC2626' : days !== null && days <= ALERT_DAYS ? '#B45309' : '#1A1A1A';
     tr.innerHTML =
-        '<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;"><input type="checkbox" class="row-check w-4 h-4 accent-primary cursor-pointer"></td>'
+        '<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;"><input type="checkbox" class="row-check w-4 h-4 accent-blue-600 cursor-pointer"></td>'
       + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.codigo]||'—') + '</td>'
       + '<td class="px-3 py-3 " style="border:1px solid #E5E5E5;">' + (row[cols.desc]||'—') + '</td>'
       + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.lote_fisico]||'—') + '</td>'
@@ -1031,7 +1145,7 @@ function renderMov(data, replace = true) {
     const tr = document.createElement('tr');
     tr.className = 'transition-colors';
     tr.innerHTML =
-        `<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;"><input type="checkbox" class="row-check w-4 h-4 accent-primary cursor-pointer"></td>`
+        `<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;"><input type="checkbox" class="row-check w-4 h-4 accent-blue-600 cursor-pointer"></td>`
       + `<td class="px-3 py-3 font-label-data whitespace-nowrap " style="border:1px solid #E5E5E5;">${row[cols.fecha]||'—'}</td>`
       + `<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">${row[cols.codigo]||'—'}</td>`
       + `<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">${row[cols.bpcs]||'—'}</td>`
@@ -1614,7 +1728,7 @@ function showSection(section) {
     l.style.color = isActive ? '#1A1A1A' : '#AAA';
     l.classList.toggle('font-bold',               isActive);
     l.classList.toggle('border-r-4',              isActive);
-    l.classList.toggle('border-primary',          isActive);
+    l.classList.toggle('border-blue-600',          isActive);
     l.style.background = isActive ? '#FFD100' : '';
     
   });
@@ -1641,6 +1755,8 @@ function showSection(section) {
     saldo:      { h: 'Saldo de Inventario',                   p: 'Consulta y filtra el stock actual por producto, lote o ubicacion.' },
     movimiento: { h: 'Movimientos',                           p: 'Historial de movimientos logisticos registrados.' },
     bajas:      { h: 'Reporte de Bajas',                      p: 'Productos dados de baja del inventario.' },
+    articulos:  { h: 'Maestra de Artículos',                   p: 'Catálogo maestro de artículos registrados en el sistema.' },
+    anaqueles:  { h: 'Maestra de Anaqueles',                   p: 'Catálogo de ubicaciones y anaqueles de almacén.' },
   };
   const t = titles[section] || titles.dashboard;
   const h2 = document.querySelector('h2.font-headline-lg');
@@ -1705,7 +1821,7 @@ function renderBajas(data, replace = true) {
     const tr = document.createElement('tr');
     tr.className = 'transition-colors ' + rowClass; tr.style.color = days !== null && days < 0 ? '#DC2626' : days !== null && days <= ALERT_DAYS ? '#B45309' : '#1A1A1A';
     tr.innerHTML =
-        '<td class="px-3 py-2 text-center " style="border:1px solid #E5E5E5;"><input type="checkbox" class="row-check w-4 h-4 accent-primary cursor-pointer"></td>'
+        '<td class="px-3 py-2 text-center " style="border:1px solid #E5E5E5;"><input type="checkbox" class="row-check w-4 h-4 accent-blue-600 cursor-pointer"></td>'
       + '<td class="px-3 py-2 font-label-data whitespace-nowrap " style="border:1px solid #E5E5E5;">' + (row[cols.fecha]    || '—') + '</td>'
       + '<td class="px-3 py-2 font-label-data " style="border:1px solid #E5E5E5;">'                   + (row[cols.codigo]   || '—') + '</td>'
       + '<td class="px-3 py-2 " style="border:1px solid #E5E5E5;">'                                   + (row[cols.desc]     || '—') + '</td>'
