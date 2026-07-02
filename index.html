@@ -1236,6 +1236,7 @@ async function loadMov(forceRefresh = true) {
     const text = await fetchCSV(URL_MOV, forceRefresh);
     const { headers, rows } = parseCSV(text);
     dataMov = toObjects(headers, rows);
+    if (dataMov.length) aplicarOverridesTrasladado(dataMov, getMovColsCached(Object.keys(dataMov[0])));
     buildSearchIndex('mov', dataMov);
     refrescarVistaMov();
     document.getElementById('last-update-mov').textContent = ts();
@@ -1836,6 +1837,24 @@ function exportMovTRFMAS() {
 // =============================================
 // MARCAR COMO "Trasladado" LA COLUMNA COMENTARIO EN EL SHEET
 // =============================================
+// El CSV publicado del Sheet tarda 1-2 min en reflejar cambios escritos vía
+// Apps Script. Mientras tanto, guardamos aquí los IDs recién marcados para
+// que un auto-refresco de por medio no los "regrese" a Pendiente en pantalla.
+const _trasladadosOverride = {}; // id -> timestamp en que se marcó
+const OVERRIDE_TTL = 5 * 60 * 1000; // 5 minutos: tiempo de sobra para que el CSV se actualice
+
+function aplicarOverridesTrasladado(data, cols) {
+  const now = Date.now();
+  Object.keys(_trasladadosOverride).forEach(id => {
+    if (now - _trasladadosOverride[id] > OVERRIDE_TTL) delete _trasladadosOverride[id]; // ya caducó, el CSV ya debería traerlo bien
+  });
+  if (!Object.keys(_trasladadosOverride).length) return;
+  data.forEach(row => {
+    const id = String(row[cols.id]);
+    if (_trasladadosOverride[id] !== undefined) row[cols.comentario] = 'Trasladado';
+  });
+}
+
 async function marcarTrasladadoMov(ids) {
   if (!APPS_SCRIPT_URL) {
     console.warn('APPS_SCRIPT_URL no configurado: no se pudo marcar Trasladado en el Sheet.');
@@ -1860,13 +1879,15 @@ async function marcarTrasladadoMov(ids) {
   // Actualiza en memoria (dataMov y _vsData.mov) sin esperar al próximo refresco del CSV
   const idSet = new Set(ids.map(String));
   const colsMov = getMovColsCached(Object.keys(dataMov[0] || {}));
+  const now = Date.now();
   [dataMov, _vsData.mov].forEach(arr => {
     arr.forEach(row => {
       if (idSet.has(String(row[colsMov.id]))) row[colsMov.comentario] = 'Trasladado';
     });
   });
+  idSet.forEach(id => { _trasladadosOverride[id] = now; });
   buildSearchIndex('mov', dataMov);
-  renderVirtual('mov', _vsData.mov, renderMov);
+  refrescarVistaMov();
 }
 
 // Pre-indexar elementos por sección UNA sola vez (evita querySelectorAll repetido)
