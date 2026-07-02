@@ -1027,8 +1027,8 @@ async function loadSaldo(forceRefresh = true) {
     invalidarCachesCols();
     dataSaldo = toObjects(headers, rows);
     buildSearchIndex('saldo', dataSaldo);
-    renderVirtual('saldo', dataSaldo, renderSaldo);
-    renderAlertas(dataSaldo);
+    refrescarVistaSaldo();
+    refrescarVistaAlertas();
     updateKPIsAndDonut(dataSaldo);
     const t = ts();
     document.getElementById('last-update-saldo').textContent = t;
@@ -1237,7 +1237,7 @@ async function loadMov(forceRefresh = true) {
     const { headers, rows } = parseCSV(text);
     dataMov = toObjects(headers, rows);
     buildSearchIndex('mov', dataMov);
-    renderVirtual('mov', dataMov, renderMov);
+    refrescarVistaMov();
     document.getElementById('last-update-mov').textContent = ts();
   } catch(e) {
     document.getElementById('tbody-mov').innerHTML = '<tr class="error-row"><td colspan="9">Error al cargar movimientos: ' + e.message + '</td></tr>';
@@ -1954,7 +1954,7 @@ async function loadBajas(forceRefresh = true) {
     const { headers, rows } = parseCSV(text);
     dataBajas = toObjects(headers, rows);
     buildSearchIndex('bajas', dataBajas);
-    renderVirtual('bajas', dataBajas, renderBajas);
+    refrescarVistaBajas();
     document.getElementById('last-update-bajas').textContent = ts();
   } catch(e) {
     document.getElementById('tbody-bajas').innerHTML = '<tr class="error-row"><td colspan="12">Error al cargar: ' + e.message + '</td></tr>';
@@ -2050,7 +2050,45 @@ function clearFilterBajas() {
 }
 
 
+// =============================================
+// REAPLICAR FILTROS/BUSQUEDA VIGENTES TRAS CADA CARGA
+// (para que el auto-refresco no te resetee lo que estabas viendo)
+// =============================================
+function _valorActivo(id) {
+  const el = document.getElementById(id);
+  return !!(el && String(el.value || '').trim());
+}
+
+function refrescarVistaSaldo() {
+  const globalQ = (document.getElementById('global-search')?.value || '').trim();
+  if (globalQ) { debouncedGlobalSearch(globalQ); return; }
+  const activo = ['search-saldo','filter-whs-saldo','filter-codigo-saldo','filter-lote-saldo'].some(_valorActivo);
+  if (activo && dataSaldo.length) filterSaldo();
+  else renderVirtual('saldo', dataSaldo, renderSaldo);
+}
+
+function refrescarVistaAlertas() {
+  const activo = ['search-alertas','filter-whs-alertas'].some(_valorActivo);
+  if (activo && dataSaldo.length) filterAlertas();
+  else renderAlertas(dataSaldo);
+}
+
+function refrescarVistaMov() {
+  const globalQ = (document.getElementById('global-search')?.value || '').trim();
+  if (globalQ) { debouncedGlobalSearch(globalQ); return; }
+  const activo = ['search-mov','fecha-desde','fecha-hasta','filter-comentario-mov'].some(_valorActivo);
+  if (activo && dataMov.length) filterMov();
+  else renderVirtual('mov', dataMov, renderMov);
+}
+
+function refrescarVistaBajas() {
+  const activo = ['search-bajas','filter-destino-bajas','bajas-desde','bajas-hasta'].some(_valorActivo);
+  if (activo && dataBajas.length) filterBajas();
+  else renderVirtual('bajas', dataBajas, renderBajas);
+}
+
 // Carga progresiva: saldo primero (tab activo), luego mov y bajas en background
+let _lastAutoRefresh = Date.now();
 async function cargarTodo(forceRefresh = false) {
   // Saldo es lo primero que el usuario ve — cargarlo antes
   await loadSaldo(forceRefresh);
@@ -2059,6 +2097,7 @@ async function cargarTodo(forceRefresh = false) {
     loadMov(forceRefresh),
     loadBajas(forceRefresh)
   ]);
+  _lastAutoRefresh = Date.now();
 }
 // Solo auto-refresh si la pestaña está activa (evita refreshes innecesarios)
 function autoRefresh() {
@@ -2066,6 +2105,16 @@ function autoRefresh() {
 }
 cargarTodo(false); // primera carga: usa caché si hay
 setInterval(autoRefresh, 600000); // auto-refresco inteligente: solo si pestaña activa
+
+// Si estuviste con la pestaña oculta/minimizada y ya pasaron 10+ min desde el
+// último refresco, al volver a la pestaña se refresca de inmediato en vez de
+// esperar al próximo "tick" del setInterval (que el navegador puede pausar
+// mientras la pestaña está en segundo plano).
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && Date.now() - _lastAutoRefresh >= 600000) {
+    autoRefresh();
+  }
+});
 
 // =============================================
 // MODAL CAMPANILLA Y USUARIO
