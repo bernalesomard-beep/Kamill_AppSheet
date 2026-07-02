@@ -452,6 +452,14 @@
             <button onclick="exportMovTRFMAS()" class="btn-ghost flex items-center gap-1 whitespace-nowrap" style="border-color:#D97706;color:#D97706;">
               <span class="material-symbols-outlined text-[16px]">table_view</span><span>TRFMAS</span>
             </button>
+            <div class="flex items-center gap-2">
+              <label class="text-[12px]" style="color:#666;">Estado:</label>
+              <select id="filter-comentario-mov" onchange="filterMov()" class="font-label-data text-[12px] rounded-md px-2 py-1 outline-none" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;">
+                <option value="">Todos</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="trasladado">Trasladado</option>
+              </select>
+            </div>
             <div class="relative flex items-center">
               <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#94A3B8;">search</span>
               <input id="search-mov" oninput="debouncedFilterMov()" onkeydown="if(event.key==='Enter')filterMov()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-40" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Buscar...">
@@ -479,10 +487,11 @@
                 <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">UBIC. DESTINO</th>
                 <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">CANTIDAD</th>
                 <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">USUARIO</th>
+                <th class="font-table-header text-table-header px-3 py-2 text-center " style="border:1px solid #E5E5E5;">ESTADO</th>
               </tr>
             </thead>
             <tbody id="tbody-mov">
-              <tr class="loading-row"><td colspan="8"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Cargando datos desde Google Sheets...</td></tr>
+              <tr class="loading-row"><td colspan="9"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Cargando datos desde Google Sheets...</td></tr>
             </tbody>
           </table>
         </div>
@@ -955,6 +964,8 @@ function getMovCols(keys) {
     destino:  detectCol(keys, [/^RTOLC$/i, /destino/i, /to/i]) || keys[9],
     cantidad: detectCol(keys, [/^RQTYT$/i, /cantidad/i, /qty/i]) || keys[7],
     usuario:  detectCol(keys, [/^RCOM$/i, /usuario/i, /user/i]) || keys[12],
+    id:         detectCol(keys, [/^id$/i]) || keys[0],
+    comentario: detectCol(keys, [/^comentario$/i, /coment/i]) || keys[13],
   };
 }
 
@@ -1219,7 +1230,7 @@ function renderAlertas(data) {
 async function loadMov(forceRefresh = true) {
   const btn = document.getElementById('btn-mov');
   btn.innerHTML = '<span class="material-symbols-outlined spin text-[16px]">sync</span> Cargando...';
-  document.getElementById('tbody-mov').innerHTML = '<tr class="loading-row"><td colspan="8"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Conectando con Google Sheets...</td></tr>';
+  document.getElementById('tbody-mov').innerHTML = '<tr class="loading-row"><td colspan="9"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Conectando con Google Sheets...</td></tr>';
 
   try {
     const text = await fetchCSV(URL_MOV, forceRefresh);
@@ -1229,7 +1240,7 @@ async function loadMov(forceRefresh = true) {
     renderVirtual('mov', dataMov, renderMov);
     document.getElementById('last-update-mov').textContent = ts();
   } catch(e) {
-    document.getElementById('tbody-mov').innerHTML = '<tr class="error-row"><td colspan="8">Error al cargar movimientos: ' + e.message + '</td></tr>';
+    document.getElementById('tbody-mov').innerHTML = '<tr class="error-row"><td colspan="9">Error al cargar movimientos: ' + e.message + '</td></tr>';
   }
   btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar';
 }
@@ -1239,7 +1250,7 @@ async function loadMov(forceRefresh = true) {
 // =============================================
 function renderMov(data, replace = true) {
   const tbody = document.getElementById('tbody-mov');
-  if (!data.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="7">Sin movimientos registrados</td></tr>'; return; }
+  if (!data.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="9">Sin movimientos registrados</td></tr>'; return; }
   
   const cols = getMovColsCached(Object.keys(data[0]));
   const frag = document.createDocumentFragment();
@@ -1247,8 +1258,13 @@ function renderMov(data, replace = true) {
   data.forEach(row => {
     const destino = row[cols.destino] || '';
     const cantidad= row[cols.cantidad] || '';
+    const esTrasladado = String(row[cols.comentario] || '').trim().toLowerCase() === 'trasladado';
+    const estadoBadge = esTrasladado
+      ? '<span class="badge-ok">TRASLADADO</span>'
+      : '<span class="badge-warn">PENDIENTE</span>';
     const tr = document.createElement('tr');
     tr.className = 'transition-colors';
+    tr.dataset.id = row[cols.id] || '';
     tr.innerHTML =
         `<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;"><input type="checkbox" class="row-check w-4 h-4 accent-blue-600 cursor-pointer"></td>`
       + `<td class="px-3 py-3 font-label-data whitespace-nowrap " style="border:1px solid #E5E5E5;">${row[cols.fecha]||'—'}</td>`
@@ -1257,7 +1273,8 @@ function renderMov(data, replace = true) {
       + `<td class="px-3 py-3 " style="border:1px solid #E5E5E5;">${row[cols.origen]||'—'}</td>`
       + `<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">${destino||'—'}</td>`
       + `<td class="px-3 py-3 text-right font-label-data font-bold " style="border:1px solid #E5E5E5;">${cantidad||'0'}</td>`
-      + `<td class="px-3 py-3 " style="border:1px solid #E5E5E5;">${row[cols.usuario]||'—'}</td>`;
+      + `<td class="px-3 py-3 " style="border:1px solid #E5E5E5;">${row[cols.usuario]||'—'}</td>`
+      + `<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;">${estadoBadge}</td>`;
     frag.appendChild(tr);
   });
   if (replace) tbody.innerHTML = '';
@@ -1460,6 +1477,7 @@ function filterMov() {
   const q = document.getElementById('search-mov').value.toLowerCase().trim();
   const fechaDesde = document.getElementById('fecha-desde').value;
   const fechaHasta = document.getElementById('fecha-hasta').value;
+  const estadoSel  = document.getElementById('filter-comentario-mov').value; // '', 'pendiente', 'trasladado'
 
   const cols = getMovColsCached(Object.keys(dataMov[0]));
   const colFecha = cols.fecha;
@@ -1479,7 +1497,12 @@ function filterMov() {
       cumpleDesde = !fechaDesde || fechaISO >= fechaDesde;
       cumpleHasta = !fechaHasta || fechaISO <= fechaHasta;
     }
-    return coincideTexto && cumpleDesde && cumpleHasta;
+    const comentarioVal = String(r[cols.comentario] || '').trim().toLowerCase();
+    const esTrasladado   = comentarioVal === 'trasladado';
+    const cumpleEstado = !estadoSel
+      || (estadoSel === 'trasladado' && esTrasladado)
+      || (estadoSel === 'pendiente'  && !esTrasladado);
+    return coincideTexto && cumpleDesde && cumpleHasta && cumpleEstado;
   });
 
   renderVirtual('mov', filtered, renderMov);
@@ -1489,6 +1512,7 @@ function clearFilterMov() {
   document.getElementById('search-mov').value = '';
   document.getElementById('fecha-desde').value = '';
   document.getElementById('fecha-hasta').value = '';
+  document.getElementById('filter-comentario-mov').value = '';
   renderVirtual('mov', dataMov, renderMov);
 }
 
@@ -1800,6 +1824,49 @@ function exportMovTRFMAS() {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'TRFMAS');
   XLSX.writeFile(wb, 'TRFMAS.xls');
+
+  // Si se exportó una selección puntual (no "todos"), marcamos esas filas como Trasladado
+  if (selectedRows.length > 0) {
+    const colsMov = getMovColsCached(Object.keys(source[0]));
+    const ids = source.map(row => row[colsMov.id]).filter(Boolean);
+    if (ids.length) marcarTrasladadoMov(ids);
+  }
+}
+
+// =============================================
+// MARCAR COMO "Trasladado" LA COLUMNA COMENTARIO EN EL SHEET
+// =============================================
+async function marcarTrasladadoMov(ids) {
+  if (!APPS_SCRIPT_URL) {
+    console.warn('APPS_SCRIPT_URL no configurado: no se pudo marcar Trasladado en el Sheet.');
+    return;
+  }
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // evita preflight CORS
+      body: JSON.stringify({ token: UPLOAD_TOKEN, action: 'marcarTrasladado', ids })
+    });
+    const result = await resp.json();
+    if (!result.ok) {
+      alert('El archivo TRFMAS se descargó, pero no se pudo marcar "Trasladado" en el Sheet:\n' + (result.error || 'Error desconocido'));
+      return;
+    }
+  } catch (e) {
+    alert('El archivo TRFMAS se descargó, pero no se pudo conectar con el Sheet para marcar "Trasladado": ' + e.message);
+    return;
+  }
+
+  // Actualiza en memoria (dataMov y _vsData.mov) sin esperar al próximo refresco del CSV
+  const idSet = new Set(ids.map(String));
+  const colsMov = getMovColsCached(Object.keys(dataMov[0] || {}));
+  [dataMov, _vsData.mov].forEach(arr => {
+    arr.forEach(row => {
+      if (idSet.has(String(row[colsMov.id]))) row[colsMov.comentario] = 'Trasladado';
+    });
+  });
+  buildSearchIndex('mov', dataMov);
+  renderVirtual('mov', _vsData.mov, renderMov);
 }
 
 // Pre-indexar elementos por sección UNA sola vez (evita querySelectorAll repetido)
