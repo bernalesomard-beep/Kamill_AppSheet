@@ -257,6 +257,10 @@
       <span class="material-symbols-outlined text-[20px]">shelves</span>
       <span class="text-[10px] font-semibold tracking-wide uppercase text-center leading-tight">Anaqueles</span>
     </a>
+    <a data-nav="ocupabilidad" onclick="showSection('ocupabilidad')" class="flex flex-col items-center gap-1 px-2 py-3 transition-colors duration-200 cursor-pointer" style="color:#94A3B8;" href="#">
+      <span class="material-symbols-outlined text-[20px]">grid_view</span>
+      <span class="text-[10px] font-semibold tracking-wide uppercase text-center leading-tight">Ocupabilidad</span>
+    </a>
   </nav>
   <div class="px-3 pb-2">
     <div class="w-full border-t mb-3" style="border-color:#1E293B;"></div>
@@ -634,6 +638,35 @@
         <p id="lote-msg" class="text-[12px] mt-1 hidden" style="color:#888;"></p>
       </div>
 
+      <!-- Ocupabilidad -->
+      <div class="exec-card p-5 rounded-md">
+        <div class="flex items-center justify-between mb-1">
+          <h3 class="font-bold text-[15px]" style="color:#1A1A1A;">Ocupabilidad</h3>
+          <span class="font-label-data text-[12px] font-bold" style="color:#2563EB;" id="ocup-fecha-hoy">—</span>
+        </div>
+        <p class="font-table-header text-table-header mb-3" style="color:#94A3B8;">NAVE 2 · LURIN</p>
+
+        <div class="space-y-2 mb-4">
+          <div class="flex items-center justify-between text-[13px]" style="color:#1A1A1A;">
+            <span>Alturas ocupadas</span>
+            <span class="font-label-data font-bold" id="ocup-alturas-val">—</span>
+          </div>
+          <div class="flex items-center justify-between text-[13px]" style="color:#1A1A1A;">
+            <span>Ubicaciones de piso (fijo)</span>
+            <span class="font-label-data font-bold" id="ocup-piso-val">36</span>
+          </div>
+          <div class="flex justify-between items-center mt-2 pt-2" style="border-top:1px solid #E5E5E5;">
+            <span class="font-table-header text-table-header" style="color:#94A3B8;">TOTAL A REGISTRAR HOY</span>
+            <span class="font-label-data text-[16px] font-bold" style="color:#2563EB;" id="ocup-total-val">—</span>
+          </div>
+        </div>
+
+        <button onclick="alimentarOcupabilidad()" id="btn-alimentar-ocupabilidad" class="w-full btn-primary flex items-center justify-center gap-1 rounded-md">
+          <span class="material-symbols-outlined text-[16px]">bolt</span> Alimentar
+        </button>
+        <p id="ocup-msg" class="text-[12px] mt-2"></p>
+      </div>
+
     </div>
   </div>
 
@@ -784,6 +817,12 @@
             <option value="disponible">Disponible</option>
             <option value="ocupado">Ocupado</option>
           </select>
+          <select id="filter-tipo-anaqueles" onchange="filterAnaqueles()" class="font-label-data text-[12px] rounded-md px-2 py-1 outline-none" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;">
+            <option value="">Tipo: Todos</option>
+            <option value="BIN">BIN</option>
+            <option value="ANAQUEL">ANAQUEL</option>
+            <option value="ALTURA">ALTURA</option>
+          </select>
           <button onclick="clearFilterAnaqueles()" class="btn-ghost flex items-center gap-1 whitespace-nowrap">
             <span class="material-symbols-outlined text-[16px]">close</span> Limpiar
           </button>
@@ -837,6 +876,40 @@
     </div>
   </div>
 
+  <!-- SECCIÓN OCUPABILIDAD -->
+  <div data-section="ocupabilidad">
+    <div class="exec-card rounded-md overflow-hidden">
+      <div class="px-5 py-4 flex justify-between items-center flex-wrap gap-3" style="border-bottom:1px solid #E5E5E5;">
+        <div>
+          <h3 class="font-bold text-[15px]" style="color:#1A1A1A;">Ocupabilidad</h3>
+          <span class="last-update" id="last-update-ocupabilidad"></span>
+        </div>
+        <div class="flex items-center gap-3 flex-wrap">
+          <button onclick="exportCSV('ocupabilidad')" class="btn-outline-cyan flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">download</span><span>Exportar</span>
+          </button>
+          <select id="filter-mes-ocupabilidad" onchange="filterOcupabilidad()" class="font-label-data text-[12px] rounded-md px-2 py-1 outline-none" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;">
+            <option value="">Mes: Todos</option>
+          </select>
+          <button onclick="clearFilterOcupabilidad()" class="btn-ghost flex items-center gap-1 whitespace-nowrap">
+            <span class="material-symbols-outlined text-[16px]">close</span> Limpiar
+          </button>
+          <button onclick="loadOcupabilidad()" id="btn-ocupabilidad" class="flex items-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors" style="color:#2563EB;">
+            <span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar
+          </button>
+        </div>
+      </div>
+      <div class="overflow-auto max-h-[calc(100vh-280px)] custom-scrollbar" style="will-change:transform">
+        <table class="w-full border-collapse" style="border:1px solid #E5E5E5;">
+          <thead id="thead-ocupabilidad"></thead>
+          <tbody id="tbody-ocupabilidad">
+            <tr class="loading-row"><td colspan="42"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Cargando datos desde Google Sheets...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 
 </main>
 
@@ -854,10 +927,15 @@ const URL_MOV   = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vREnptY5onM9K
 const URL_BAJAS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vREnptY5onM9KVFslXKx_3aFSaLIVBgNSZxcMKiiZ6WpgxACTSoxnyhyGS8784QjaDcIwDS5szwIXs4/pub?gid=868163741&single=true&output=csv';
 const URL_ARTICULOS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSMljx9UbVppkAvRK0_8TeEo4AjwXrslkWifhKW6ABsJ5brryaZRsb9_cDEbszR2ymkqIbUQuu58pld/pub?gid=649948627&single=true&output=csv';
 const URL_ANAQUELES = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSMljx9UbVppkAvRK0_8TeEo4AjwXrslkWifhKW6ABsJ5brryaZRsb9_cDEbszR2ymkqIbUQuu58pld/pub?gid=860593924&single=true&output=csv';
+const URL_OCUPABILIDAD = ''; // Pega aquí la URL CSV publicada de la pestaña "OCUPABILIDAD"
 
 // ── CARGA DE PLANTILLA (sobre-escribe la pestaña "0. SALDO") ──
 // Pega aquí la URL de despliegue de tu Apps Script (termina en /exec)
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrA418Z6kagA8RpQnIY_Z2Q8gp5w2rWPk6TgwmTaIM_Xs87Lot3cY69cCUK6HkSR1Iqw/exec';
+// Apps Script del spreadsheet de Artículos/Anaqueles/Ocupabilidad (distinto al de Saldo/Movimientos)
+const APPS_SCRIPT_URL_OCUPABILIDAD = 'https://script.google.com/macros/s/AKfycbwvEVTXUagPtYHkzK9tremFTeFi19KOsXj9EpbdVMF4Hlk5Yi8aHkPj4YFDae5039-wHg/exec';
+// Cantidad fija de ubicaciones de piso que siempre se suman al total diario de Ocupabilidad
+const PISO_FIJO = 36;
 // Debe ser EXACTAMENTE el mismo texto que la constante TOKEN en Code.gs
 const UPLOAD_TOKEN = '2026';
 
@@ -919,6 +997,7 @@ let dataMov   = [];
 let dataBajas = [];
 let dataArticulos = [];
 let dataAnaqueles  = [];
+let dataOcupabilidad = [];
 
 // =============================================
 // PARSE CSV (manejo de comillas y comas)
@@ -1017,6 +1096,9 @@ function getArticulosCols(keys) {
 }
 
 // =============================================
+// COLUMNAS — OCUPABILIDAD
+// =============================================
+// =============================================
 // COLUMNAS — MAESTRA DE ANAQUELES
 // =============================================
 function getAnaquelesCols(keys) {
@@ -1028,6 +1110,30 @@ function getAnaquelesCols(keys) {
     posicion:  detectCol(keys, [/posicion/i]) || keys[4],
     nivel:     detectCol(keys, [/^nivel$/i]) || keys[5],
     ubicacion: detectCol(keys, [/ubicacion/i]) || keys[6],
+  };
+}
+
+// =============================================
+// COLUMNAS — OCUPABILIDAD
+// =============================================
+function getOcupabilidadCols(keys) {
+  const dias = {};
+  for (let d = 1; d <= 31; d++) {
+    dias[d] = keys.find(k => k.trim() === String(d)) || null;
+  }
+  return {
+    mes:       detectCol(keys, [/^mes$/i]) || keys[0],
+    local:     detectCol(keys, [/^local$/i]) || keys[1],
+    ubicacion: detectCol(keys, [/ubicaci/i]) || keys[2],
+    nave:      detectCol(keys, [/^nave$/i]) || keys[3],
+    cliente:   detectCol(keys, [/cliente/i]) || keys[4],
+    dias:      dias,
+    max:       detectCol(keys, [/^max$/i]),
+    min:       detectCol(keys, [/^min$/i]),
+    prom:      detectCol(keys, [/^prom/i]),
+    capacidad: detectCol(keys, [/capacidad\s*contratada/i]),
+    maxVsCap:  detectCol(keys, [/vs.*capac/i]),
+    ejecutivo: detectCol(keys, [/ejecutivo/i]),
   };
 }
 
@@ -1673,6 +1779,7 @@ let _movColsCache   = null;
 let _bajasColsCache = null;
 let _articulosColsCache = null;
 let _anaquelesColsCache  = null;
+let _ocupabilidadColsCache = null;
 
 function getSaldoColsCached(keys) {
   if (!_saldoColsCache) _saldoColsCache = getSaldoCols(keys);
@@ -1694,6 +1801,10 @@ function getAnaquelesColsCached(keys) {
   if (!_anaquelesColsCache) _anaquelesColsCache = getAnaquelesCols(keys);
   return _anaquelesColsCache;
 }
+function getOcupabilidadColsCached(keys) {
+  if (!_ocupabilidadColsCache) _ocupabilidadColsCache = getOcupabilidadCols(keys);
+  return _ocupabilidadColsCache;
+}
 
 // INVALIDAR cache al recargar datos
 function invalidarCachesCols() {
@@ -1702,6 +1813,7 @@ function invalidarCachesCols() {
   _bajasColsCache = null;
   _articulosColsCache = null;
   _anaquelesColsCache  = null;
+  _ocupabilidadColsCache = null;
   _saldoCodigosSet = null;
   _saldoUbicacionesSet = null;
 }
@@ -1817,6 +1929,19 @@ function exportCSV(type) {
     });
     filename = 'maestra_anaqueles.xlsx';
     sheetName = 'Anaqueles';
+  } else if (type === 'ocupabilidad') {
+    // Genérico: usa las cabeceras reales del thead (42 columnas: Mes..Ejecutivo)
+    const headerCells = Array.from(document.querySelectorAll('#thead-ocupabilidad th')).slice(1); // sin checkbox
+    const headerNames = headerCells.map(th => th.innerText.trim());
+    const rows = getRowsForExport('tbody-ocupabilidad');
+    data = rows.map(tr => {
+      const tds = Array.from(tr.querySelectorAll('td')).slice(1); // sin checkbox
+      const obj = {};
+      headerNames.forEach((h, i) => { obj[h || ('COL' + i)] = tds[i]?.innerText || ''; });
+      return obj;
+    });
+    filename = 'ocupabilidad.xlsx';
+    sheetName = 'Ocupabilidad';
   }
 
   if (!data || data.length === 0) { alert('No hay datos para exportar.'); return; }
@@ -2402,18 +2527,20 @@ function filterAnaqueles() {
   const q             = document.getElementById('search-anaqueles').value.trim().toLowerCase();
   const bodega        = document.getElementById('filter-whs-anaqueles').value.trim().toLowerCase();
   const estatusFiltro = document.getElementById('filter-estatus-anaqueles').value; // '', 'ocupado', 'disponible'
+  const tipoFiltro    = document.getElementById('filter-tipo-anaqueles').value; // '', 'BIN', 'ANAQUEL', 'ALTURA'
   const cols          = getAnaquelesColsCached(Object.keys(dataAnaqueles[0]));
   const ubicacionesOcupadas = getSaldoUbicacionesOcupadas();
 
   const filtered = dataAnaqueles.filter((r, i) => {
     const coincideTexto  = !q      || _searchIndex.anaqueles[i].includes(q);
     const coincideBodega = !bodega || String(r[cols.bodega] || '').toLowerCase().includes(bodega);
+    const coincideTipo   = !tipoFiltro || String(r[cols.tipo] || '').trim().toUpperCase() === tipoFiltro;
     let coincideEstatus = true;
     if (estatusFiltro) {
       const ocupado = ubicacionesOcupadas && ubicacionesOcupadas.has(String(r[cols.ubicacion] || '').trim().toUpperCase());
       coincideEstatus = estatusFiltro === 'ocupado' ? ocupado : !ocupado;
     }
-    return coincideTexto && coincideBodega && coincideEstatus;
+    return coincideTexto && coincideBodega && coincideTipo && coincideEstatus;
   });
   renderAnaqueles(filtered);
 }
@@ -2422,14 +2549,211 @@ function clearFilterAnaqueles() {
   document.getElementById('search-anaqueles').value = '';
   document.getElementById('filter-whs-anaqueles').value = '';
   document.getElementById('filter-estatus-anaqueles').value = '';
+  document.getElementById('filter-tipo-anaqueles').value = '';
   renderAnaqueles(dataAnaqueles);
 }
 
 function refrescarVistaAnaqueles() {
-  const hayFiltro = _valorActivo('search-anaqueles') || _valorActivo('filter-whs-anaqueles') || document.getElementById('filter-estatus-anaqueles').value;
+  const hayFiltro = _valorActivo('search-anaqueles') || _valorActivo('filter-whs-anaqueles') || document.getElementById('filter-estatus-anaqueles').value || document.getElementById('filter-tipo-anaqueles').value;
   if (hayFiltro && dataAnaqueles.length) filterAnaqueles();
   else renderAnaqueles(dataAnaqueles);
   updateAnaquelesKPIs();
+  updateOcupabilidadWidget();
+}
+
+// =============================================
+// OCUPABILIDAD — tabla (meses x días 1-31)
+// =============================================
+function buildOcupabilidadThead() {
+  const thead = document.getElementById('thead-ocupabilidad');
+  if (thead.dataset.built) return; // solo se construye una vez
+  let diasHtml = '';
+  for (let d = 1; d <= 31; d++) {
+    diasHtml += '<th class="font-table-header text-table-header px-2 py-2 text-center" style="border:1px solid #E0E0E0;">' + d + '</th>';
+  }
+  thead.innerHTML =
+      '<tr>'
+    + '<th class="font-table-header text-table-header px-3 py-2 text-center w-8" style="border:1px solid #E0E0E0;"><input type="checkbox" id="chk-all-ocupabilidad" onchange="toggleAllCheck(\'tbody-ocupabilidad\',this.checked)" class="w-4 h-4 accent-blue-600 cursor-pointer"></th>'
+    + '<th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">MES</th>'
+    + '<th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">LOCAL</th>'
+    + '<th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">UBICACIÓN</th>'
+    + '<th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">NAVE</th>'
+    + '<th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">CLIENTE</th>'
+    + diasHtml
+    + '<th class="font-table-header text-table-header px-2 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">MAX</th>'
+    + '<th class="font-table-header text-table-header px-2 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">MIN</th>'
+    + '<th class="font-table-header text-table-header px-2 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">PROM</th>'
+    + '<th class="font-table-header text-table-header px-3 py-2 text-right whitespace-nowrap" style="border:1px solid #E0E0E0;">CAP. CONTRATADA</th>'
+    + '<th class="font-table-header text-table-header px-3 py-2 text-right whitespace-nowrap" style="border:1px solid #E0E0E0;">MAX VS CAP. CONT.</th>'
+    + '<th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">EJECUTIVO</th>'
+    + '</tr>';
+  thead.dataset.built = '1';
+}
+
+async function loadOcupabilidad(forceRefresh = true) {
+  buildOcupabilidadThead();
+  const btn = document.getElementById('btn-ocupabilidad');
+  btn.innerHTML = '<span class="material-symbols-outlined spin text-[16px]">sync</span> Cargando...';
+  document.getElementById('tbody-ocupabilidad').innerHTML = '<tr class="loading-row"><td colspan="42"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Conectando con Google Sheets...</td></tr>';
+
+  if (!URL_OCUPABILIDAD) {
+    document.getElementById('tbody-ocupabilidad').innerHTML = '<tr class="error-row"><td colspan="42">Falta configurar URL_OCUPABILIDAD.</td></tr>';
+    btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar';
+    return;
+  }
+
+  try {
+    const text = await fetchCSV(URL_OCUPABILIDAD, forceRefresh);
+    const { headers, rows } = parseCSV(text);
+    dataOcupabilidad = toObjects(headers, rows);
+    poblarFiltroMesOcupabilidad();
+    refrescarVistaOcupabilidad();
+    document.getElementById('last-update-ocupabilidad').textContent = ts();
+  } catch(e) {
+    document.getElementById('tbody-ocupabilidad').innerHTML = '<tr class="error-row"><td colspan="42">Error al cargar ocupabilidad: ' + e.message + '</td></tr>';
+  }
+  btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar';
+}
+
+function poblarFiltroMesOcupabilidad() {
+  if (!dataOcupabilidad.length) return;
+  const cols = getOcupabilidadColsCached(Object.keys(dataOcupabilidad[0]));
+  const sel = document.getElementById('filter-mes-ocupabilidad');
+  const valorPrevio = sel.value;
+  const meses = [...new Set(dataOcupabilidad.map(r => String(r[cols.mes] || '').trim()).filter(Boolean))];
+  sel.innerHTML = '<option value="">Mes: Todos</option>' + meses.map(m => '<option value="' + m + '">' + m + '</option>').join('');
+  if (meses.includes(valorPrevio)) sel.value = valorPrevio;
+}
+
+function renderOcupabilidad(data) {
+  const tbody = document.getElementById('tbody-ocupabilidad');
+  if (!data.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="42">Sin datos de ocupabilidad</td></tr>'; return; }
+
+  const cols = getOcupabilidadColsCached(Object.keys(data[0]));
+  const frag = document.createDocumentFragment();
+
+  data.forEach(row => {
+    let diasHtml = '';
+    for (let d = 1; d <= 31; d++) {
+      const colDia = cols.dias[d];
+      const val = colDia ? row[colDia] : '';
+      diasHtml += '<td class="px-2 py-2 text-center font-label-data" style="border:1px solid #E5E5E5;">' + (val || '') + '</td>';
+    }
+    const tr = document.createElement('tr');
+    tr.className = 'transition-colors';
+    tr.innerHTML =
+        '<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;"><input type="checkbox" class="row-check w-4 h-4 accent-blue-600 cursor-pointer"></td>'
+      + '<td class="px-3 py-3 font-label-data whitespace-nowrap" style="border:1px solid #E5E5E5;">' + (row[cols.mes]       || '—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data" style="border:1px solid #E5E5E5;">'                  + (row[cols.local]     || '—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data" style="border:1px solid #E5E5E5;">'                  + (row[cols.ubicacion] || '—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data" style="border:1px solid #E5E5E5;">'                  + (row[cols.nave]      || '—') + '</td>'
+      + '<td class="px-3 py-3 " style="border:1px solid #E5E5E5;">'                                 + (row[cols.cliente]   || '—') + '</td>'
+      + diasHtml
+      + '<td class="px-2 py-3 text-center font-label-data font-bold" style="border:1px solid #E5E5E5;">' + (row[cols.max]  || '—') + '</td>'
+      + '<td class="px-2 py-3 text-center font-label-data font-bold" style="border:1px solid #E5E5E5;">' + (row[cols.min]  || '—') + '</td>'
+      + '<td class="px-2 py-3 text-center font-label-data font-bold" style="border:1px solid #E5E5E5;">' + (row[cols.prom] || '—') + '</td>'
+      + '<td class="px-3 py-3 text-right font-label-data" style="border:1px solid #E5E5E5;">'            + (row[cols.capacidad] || '—') + '</td>'
+      + '<td class="px-3 py-3 text-right font-label-data" style="border:1px solid #E5E5E5;">'            + (row[cols.maxVsCap]  || '—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data whitespace-nowrap" style="border:1px solid #E5E5E5;">'     + (row[cols.ejecutivo] || '—') + '</td>';
+    frag.appendChild(tr);
+  });
+  tbody.innerHTML = '';
+  tbody.appendChild(frag);
+}
+
+function filterOcupabilidad() {
+  if (!dataOcupabilidad.length) { alert('Los datos aun no han cargado. Presiona Actualizar primero.'); return; }
+  const mesFiltro = document.getElementById('filter-mes-ocupabilidad').value;
+  if (!mesFiltro) { renderOcupabilidad(dataOcupabilidad); return; }
+  const cols = getOcupabilidadColsCached(Object.keys(dataOcupabilidad[0]));
+  const filtered = dataOcupabilidad.filter(r => String(r[cols.mes] || '').trim() === mesFiltro);
+  renderOcupabilidad(filtered);
+}
+
+function clearFilterOcupabilidad() {
+  document.getElementById('filter-mes-ocupabilidad').value = '';
+  renderOcupabilidad(dataOcupabilidad);
+}
+
+function refrescarVistaOcupabilidad() {
+  if (document.getElementById('filter-mes-ocupabilidad').value && dataOcupabilidad.length) filterOcupabilidad();
+  else renderOcupabilidad(dataOcupabilidad);
+}
+
+// =============================================
+// WIDGET DASHBOARD — Ocupabilidad de hoy + botón Alimentar
+// =============================================
+function updateOcupabilidadWidget() {
+  const hoy = new Date();
+  document.getElementById('ocup-fecha-hoy').textContent = hoy.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+  const alturasEl = document.getElementById('ocup-alturas-val');
+  const totalEl   = document.getElementById('ocup-total-val');
+
+  if (!dataAnaqueles.length) { alturasEl.textContent = '—'; totalEl.textContent = '—'; return; }
+  const ubicacionesOcupadas = getSaldoUbicacionesOcupadas();
+  if (!ubicacionesOcupadas) { alturasEl.textContent = '—'; totalEl.textContent = '—'; return; }
+
+  const cols = getAnaquelesColsCached(Object.keys(dataAnaqueles[0]));
+  let alturasOcupadas = 0;
+  dataAnaqueles.forEach(r => {
+    if (String(r[cols.tipo] || '').trim().toUpperCase() !== 'ALTURA') return;
+    if (ubicacionesOcupadas.has(String(r[cols.ubicacion] || '').trim().toUpperCase())) alturasOcupadas++;
+  });
+
+  alturasEl.textContent = alturasOcupadas;
+  totalEl.textContent   = alturasOcupadas + PISO_FIJO;
+}
+
+async function alimentarOcupabilidad() {
+  if (!APPS_SCRIPT_URL_OCUPABILIDAD) {
+    alert('Falta configurar APPS_SCRIPT_URL_OCUPABILIDAD en el código.');
+    return;
+  }
+  const totalEl = document.getElementById('ocup-total-val');
+  if (totalEl.textContent === '—') {
+    alert('Aún no se pudo calcular el total (espera a que carguen Saldo y Anaqueles) y vuelve a intentar.');
+    return;
+  }
+
+  const valor = Number(totalEl.textContent);
+  const hoy   = new Date();
+  const mes   = hoy.getMonth() + 1;
+  const anio  = hoy.getFullYear();
+  const dia   = hoy.getDate();
+
+  const btn = document.getElementById('btn-alimentar-ocupabilidad');
+  const msg = document.getElementById('ocup-msg');
+  const original = btn.innerHTML;
+  btn.innerHTML = '<span class="material-symbols-outlined spin text-[16px]">sync</span> Enviando...';
+  btn.style.pointerEvents = 'none';
+  msg.style.color = '#888';
+  msg.textContent = '';
+
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL_OCUPABILIDAD, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // evita preflight CORS
+      body: JSON.stringify({ token: UPLOAD_TOKEN, action: 'alimentarOcupabilidad', mes, anio, dia, valor })
+    });
+    const result = await resp.json();
+
+    if (!result.ok) {
+      msg.style.color = '#DC2626';
+      msg.textContent = 'No se pudo guardar: ' + (result.error || 'Error desconocido');
+      return;
+    }
+
+    msg.style.color = '#15803D';
+    msg.textContent = 'Guardado: día ' + dia + ' = ' + valor + '. El Sheet puede tardar 1-2 min en reflejarlo.';
+    setTimeout(() => loadOcupabilidad(true), 3000);
+  } catch (e) {
+    msg.style.color = '#DC2626';
+    msg.textContent = 'Error de conexión: ' + e.message;
+  } finally {
+    btn.innerHTML = original;
+    btn.style.pointerEvents = '';
+  }
 }
 
 
@@ -2476,12 +2800,13 @@ let _lastAutoRefresh = Date.now();
 async function cargarTodo(forceRefresh = false) {
   // Saldo es lo primero que el usuario ve — cargarlo antes
   await loadSaldo(forceRefresh);
-  // Mov, Bajas, Articulos y Anaqueles en paralelo, pero sin bloquear el UI
+  // Mov, Bajas, Articulos, Anaqueles y Ocupabilidad en paralelo, pero sin bloquear el UI
   Promise.allSettled([
     loadMov(forceRefresh),
     loadBajas(forceRefresh),
     loadArticulos(forceRefresh),
-    loadAnaqueles(forceRefresh)
+    loadAnaqueles(forceRefresh),
+    loadOcupabilidad(forceRefresh)
   ]);
   _lastAutoRefresh = Date.now();
 }
@@ -2490,6 +2815,7 @@ function autoRefresh() {
   if (!document.hidden) cargarTodo(true);
 }
 cargarTodo(false); // primera carga: usa caché si hay
+updateOcupabilidadWidget(); // muestra la fecha de hoy de inmediato, sin esperar a que carguen los datos
 setInterval(autoRefresh, 600000); // auto-refresco inteligente: solo si pestaña activa
 
 // Si estuviste con la pestaña oculta/minimizada y ya pasaron 10+ min desde el
