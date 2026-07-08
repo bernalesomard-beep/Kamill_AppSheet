@@ -736,16 +736,15 @@
             <tr>
               <th class="font-table-header text-table-header px-3 py-2 text-center w-8" style="border:1px solid #E0E0E0;"><input type="checkbox" id="chk-all-articulos" onchange="toggleAllCheck('tbody-articulos',this.checked)" class="w-4 h-4 accent-blue-600 cursor-pointer"></th>
               <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">CÓDIGO</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">CÓDIGO BPCS</th>
               <th class="font-table-header text-table-header px-3 py-2 text-left" style="border:1px solid #E0E0E0;">DESCRIPCIÓN</th>
-              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">EAN / UPC</th>
-              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">CATEGORÍA</th>
-              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">UNIDAD</th>
-              <th class="font-table-header text-table-header px-3 py-2 text-right whitespace-nowrap" style="border:1px solid #E0E0E0;">PESO (kg)</th>
-              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">ESTADO</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">EAN 13</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">EAN 14</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">ESTADO COD.</th>
             </tr>
           </thead>
           <tbody id="tbody-articulos">
-            <tr class="loading-row"><td colspan="8"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Cargando datos desde Google Sheets...</td></tr>
+            <tr class="loading-row"><td colspan="7"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Cargando datos desde Google Sheets...</td></tr>
           </tbody>
         </table>
       </div>
@@ -766,7 +765,7 @@
           </button>
           <div class="relative flex items-center">
             <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">warehouse</span>
-            <input id="filter-whs-anaqueles" oninput="debouncedFilterAnaqueles()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-28" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="WHS...">
+            <input id="filter-whs-anaqueles" oninput="debouncedFilterAnaqueles()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-28" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Bodega...">
           </div>
           <div class="relative flex items-center">
             <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">search</span>
@@ -788,18 +787,16 @@
           <thead>
             <tr>
               <th class="font-table-header text-table-header px-3 py-2 text-center w-8" style="border:1px solid #E0E0E0;"><input type="checkbox" id="chk-all-anaqueles" onchange="toggleAllCheck('tbody-anaqueles',this.checked)" class="w-4 h-4 accent-blue-600 cursor-pointer"></th>
-              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">WHS</th>
-              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">UBICACIÓN</th>
-              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">ZONA</th>
-              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">PASILLO</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">TIPO</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">BODEGA</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">RACK</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">POSICIÓN</th>
               <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">NIVEL</th>
-              <th class="font-table-header text-table-header px-3 py-2 text-right whitespace-nowrap" style="border:1px solid #E0E0E0;">CAP. MAX.</th>
-              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">TIPO</th>
-              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">ESTADO</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">UBICACIÓN</th>
             </tr>
           </thead>
           <tbody id="tbody-anaqueles">
-            <tr class="loading-row"><td colspan="9"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Cargando datos desde Google Sheets...</td></tr>
+            <tr class="loading-row"><td colspan="7"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Cargando datos desde Google Sheets...</td></tr>
           </tbody>
         </table>
       </div>
@@ -821,8 +818,8 @@
 const URL_SALDO = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vREnptY5onM9KVFslXKx_3aFSaLIVBgNSZxcMKiiZ6WpgxACTSoxnyhyGS8784QjaDcIwDS5szwIXs4/pub?gid=273620597&single=true&output=csv';
 const URL_MOV   = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vREnptY5onM9KVFslXKx_3aFSaLIVBgNSZxcMKiiZ6WpgxACTSoxnyhyGS8784QjaDcIwDS5szwIXs4/pub?gid=2101441845&single=true&output=csv';
 const URL_BAJAS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vREnptY5onM9KVFslXKx_3aFSaLIVBgNSZxcMKiiZ6WpgxACTSoxnyhyGS8784QjaDcIwDS5szwIXs4/pub?gid=868163741&single=true&output=csv';
-const URL_ARTICULOS = ''; // Pega aquí la URL CSV de tu hoja Maestra de Artículos
-const URL_ANAQUELES = ''; // Pega aquí la URL CSV de tu hoja Maestra de Anaqueles
+const URL_ARTICULOS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSMljx9UbVppkAvRK0_8TeEo4AjwXrslkWifhKW6ABsJ5brryaZRsb9_cDEbszR2ymkqIbUQuu58pld/pub?gid=649948627&single=true&output=csv';
+const URL_ANAQUELES = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSMljx9UbVppkAvRK0_8TeEo4AjwXrslkWifhKW6ABsJ5brryaZRsb9_cDEbszR2ymkqIbUQuu58pld/pub?gid=860593924&single=true&output=csv';
 
 // ── CARGA DE PLANTILLA (sobre-escribe la pestaña "0. SALDO") ──
 // Pega aquí la URL de despliegue de tu Apps Script (termina en /exec)
@@ -886,6 +883,8 @@ async function fetchCSV(url, forceRefresh = false) {
 let dataSaldo = [];
 let dataMov   = [];
 let dataBajas = [];
+let dataArticulos = [];
+let dataAnaqueles  = [];
 
 // =============================================
 // PARSE CSV (manejo de comillas y comas)
@@ -970,6 +969,35 @@ function getMovCols(keys) {
 }
 
 // =============================================
+// COLUMNAS — MAESTRA DE ARTICULOS (solo A-F)
+// =============================================
+function getArticulosCols(keys) {
+  return {
+    idMaestra:  detectCol(keys, [/id\s*maestra/i]) || keys[0],
+    codigo:     detectCol(keys, [/^codigo$/i]) || keys[1],
+    codigoBpcs: detectCol(keys, [/codigo\s*bpcs/i]) || keys[2],
+    desc:       detectCol(keys, [/descripcion/i]) || keys[3],
+    ean13:      detectCol(keys, [/ean\s*13/i]) || keys[4],
+    ean14:      detectCol(keys, [/ean\s*14/i]) || keys[5],
+  };
+}
+
+// =============================================
+// COLUMNAS — MAESTRA DE ANAQUELES
+// =============================================
+function getAnaquelesCols(keys) {
+  return {
+    id:        detectCol(keys, [/id\s*anaquel/i]) || keys[0],
+    tipo:      detectCol(keys, [/^tipo$/i]) || keys[1],
+    bodega:    detectCol(keys, [/bodega/i]) || keys[2],
+    rack:      detectCol(keys, [/^rack$/i]) || keys[3],
+    posicion:  detectCol(keys, [/posicion/i]) || keys[4],
+    nivel:     detectCol(keys, [/^nivel$/i]) || keys[5],
+    ubicacion: detectCol(keys, [/ubicacion/i]) || keys[6],
+  };
+}
+
+// =============================================
 // CALCULAR DIAS HASTA VENCIMIENTO
 // =============================================
 function daysToExpiry(str) {
@@ -1030,6 +1058,7 @@ async function loadSaldo(forceRefresh = true) {
     refrescarVistaSaldo();
     refrescarVistaAlertas();
     updateKPIsAndDonut(dataSaldo);
+    if (dataArticulos.length) refrescarVistaArticulos(); // recalcula Estado Cod. con el saldo nuevo
     const t = ts();
     document.getElementById('last-update-saldo').textContent = t;
     document.getElementById('last-update-alertas').textContent = t;
@@ -1549,6 +1578,8 @@ const debouncedFilterMov   = debounce(filterMov, 250);
 
 const debouncedFilterAlertas = debounce(filterAlertas, 250);
 const debouncedFilterBajas   = debounce(filterBajas, 250);
+const debouncedFilterArticulos = debounce(filterArticulos, 250);
+const debouncedFilterAnaqueles  = debounce(filterAnaqueles, 250);
 
 // =============================================
 // BUSQUEDA GLOBAL
@@ -1605,6 +1636,8 @@ function renderVirtual(type, data, renderFn) {
 let _saldoColsCache = null;
 let _movColsCache   = null;
 let _bajasColsCache = null;
+let _articulosColsCache = null;
+let _anaquelesColsCache  = null;
 
 function getSaldoColsCached(keys) {
   if (!_saldoColsCache) _saldoColsCache = getSaldoCols(keys);
@@ -1618,18 +1651,29 @@ function getBajasColsCached(keys) {
   if (!_bajasColsCache) _bajasColsCache = getBajasCols(keys);
   return _bajasColsCache;
 }
+function getArticulosColsCached(keys) {
+  if (!_articulosColsCache) _articulosColsCache = getArticulosCols(keys);
+  return _articulosColsCache;
+}
+function getAnaquelesColsCached(keys) {
+  if (!_anaquelesColsCache) _anaquelesColsCache = getAnaquelesCols(keys);
+  return _anaquelesColsCache;
+}
 
 // INVALIDAR cache al recargar datos
 function invalidarCachesCols() {
   _saldoColsCache = null;
   _movColsCache   = null;
   _bajasColsCache = null;
+  _articulosColsCache = null;
+  _anaquelesColsCache  = null;
+  _saldoCodigosSet = null;
 }
 
 // =============================================
 // INDICE DE BUSQUEDA — evita Object.values() en cada tecla
 // =============================================
-let _searchIndex = { saldo: [], mov: [], bajas: [] };
+let _searchIndex = { saldo: [], mov: [], bajas: [], articulos: [], anaqueles: [] };
 
 function buildSearchIndex(type, data) {
   _searchIndex[type] = data.map(row => Object.values(row).join('\u0000').toLowerCase());
@@ -1717,6 +1761,26 @@ function exportCSV(type) {
     });
     filename = 'reporte_bajas.xlsx';
     sheetName = 'Bajas';
+  } else if (type === 'articulos') {
+    const rows = getRowsForExport('tbody-articulos');
+    data = rows.map(tr => {
+      const tds = tr.querySelectorAll('td');
+      return { CODIGO: tds[1]?.innerText, CODIGO_BPCS: tds[2]?.innerText,
+               DESCRIPCION: tds[3]?.innerText, EAN13: tds[4]?.innerText, EAN14: tds[5]?.innerText,
+               ESTADO_COD: tds[6]?.innerText };
+    });
+    filename = 'maestra_articulos.xlsx';
+    sheetName = 'Articulos';
+  } else if (type === 'anaqueles') {
+    const rows = getRowsForExport('tbody-anaqueles');
+    data = rows.map(tr => {
+      const tds = tr.querySelectorAll('td');
+      return { TIPO: tds[1]?.innerText, BODEGA: tds[2]?.innerText,
+               RACK: tds[3]?.innerText, POSICION: tds[4]?.innerText, NIVEL: tds[5]?.innerText,
+               UBICACION: tds[6]?.innerText };
+    });
+    filename = 'maestra_anaqueles.xlsx';
+    sheetName = 'Anaqueles';
   }
 
   if (!data || data.length === 0) { alert('No hay datos para exportar.'); return; }
@@ -2070,6 +2134,173 @@ function clearFilterBajas() {
   renderVirtual('bajas', dataBajas, renderBajas);
 }
 
+// =============================================
+// MAESTRA DE ARTICULOS
+// =============================================
+async function loadArticulos(forceRefresh = true) {
+  const btn = document.getElementById('btn-articulos');
+  btn.innerHTML = '<span class="material-symbols-outlined spin text-[16px]">sync</span> Cargando...';
+  document.getElementById('tbody-articulos').innerHTML = '<tr class="loading-row"><td colspan="7"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Conectando con Google Sheets...</td></tr>';
+
+  if (!URL_ARTICULOS) {
+    document.getElementById('tbody-articulos').innerHTML = '<tr class="error-row"><td colspan="7">Falta configurar URL_ARTICULOS.</td></tr>';
+    btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar';
+    return;
+  }
+
+  try {
+    const text = await fetchCSV(URL_ARTICULOS, forceRefresh);
+    const { headers, rows } = parseCSV(text);
+    dataArticulos = toObjects(headers, rows);
+    buildSearchIndex('articulos', dataArticulos);
+    refrescarVistaArticulos();
+    document.getElementById('last-update-articulos').textContent = ts();
+  } catch(e) {
+    document.getElementById('tbody-articulos').innerHTML = '<tr class="error-row"><td colspan="7">Error al cargar artículos: ' + e.message + '</td></tr>';
+  }
+  btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar';
+}
+
+function renderArticulos(data) {
+  const tbody = document.getElementById('tbody-articulos');
+  if (!data.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="7">Sin artículos registrados</td></tr>'; return; }
+
+  const cols = getArticulosColsCached(Object.keys(data[0]));
+  const codigosSaldo = getSaldoCodigosSet();
+  const frag = document.createDocumentFragment();
+
+  data.forEach(row => {
+    const codigo = row[cols.codigo] || '';
+    const activo = codigosSaldo && codigosSaldo.has(String(codigo).trim().toUpperCase());
+    const estadoBadge = !codigosSaldo
+      ? '<span style="color:#707978;font-size:11px;">—</span>'
+      : activo
+        ? '<span class="badge-ok">ACTIVO</span>'
+        : '<span class="badge-error">INACTIVO</span>';
+    const tr = document.createElement('tr');
+    tr.className = 'transition-colors';
+    tr.innerHTML =
+        '<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;"><input type="checkbox" class="row-check w-4 h-4 accent-blue-600 cursor-pointer"></td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (codigo               || '—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.codigoBpcs] || '—') + '</td>'
+      + '<td class="px-3 py-3 " style="border:1px solid #E5E5E5;">'                 + (row[cols.desc]        || '—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.ean13]      || '—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.ean14]      || '—') + '</td>'
+      + '<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;">'     + estadoBadge + '</td>';
+    frag.appendChild(tr);
+  });
+  tbody.innerHTML = '';
+  tbody.appendChild(frag);
+}
+
+// =============================================
+// SET DE CÓDIGOS CON SALDO — para "Estado Cod." en Maestra de Artículos
+// =============================================
+let _saldoCodigosSet = null;
+function getSaldoCodigosSet() {
+  if (!dataSaldo.length) return null; // saldo aun no ha cargado: estado desconocido
+  if (_saldoCodigosSet) return _saldoCodigosSet;
+  const colsSaldo = getSaldoColsCached(Object.keys(dataSaldo[0]));
+  _saldoCodigosSet = new Set(
+    dataSaldo.map(r => String(r[colsSaldo.codigo] || '').trim().toUpperCase()).filter(Boolean)
+  );
+  return _saldoCodigosSet;
+}
+
+function filterArticulos() {
+  if (!dataArticulos.length) { alert('Los datos aun no han cargado. Presiona Actualizar primero.'); return; }
+  const q = document.getElementById('search-articulos').value.trim().toLowerCase();
+  if (!q) { renderArticulos(dataArticulos); return; }
+  const filtered = dataArticulos.filter((r, i) => _searchIndex.articulos[i].includes(q));
+  renderArticulos(filtered);
+}
+
+function clearFilterArticulos() {
+  document.getElementById('search-articulos').value = '';
+  renderArticulos(dataArticulos);
+}
+
+function refrescarVistaArticulos() {
+  if (_valorActivo('search-articulos') && dataArticulos.length) filterArticulos();
+  else renderArticulos(dataArticulos);
+}
+
+// =============================================
+// MAESTRA DE ANAQUELES
+// =============================================
+async function loadAnaqueles(forceRefresh = true) {
+  const btn = document.getElementById('btn-anaqueles');
+  btn.innerHTML = '<span class="material-symbols-outlined spin text-[16px]">sync</span> Cargando...';
+  document.getElementById('tbody-anaqueles').innerHTML = '<tr class="loading-row"><td colspan="7"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Conectando con Google Sheets...</td></tr>';
+
+  if (!URL_ANAQUELES) {
+    document.getElementById('tbody-anaqueles').innerHTML = '<tr class="error-row"><td colspan="7">Falta configurar URL_ANAQUELES.</td></tr>';
+    btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar';
+    return;
+  }
+
+  try {
+    const text = await fetchCSV(URL_ANAQUELES, forceRefresh);
+    const { headers, rows } = parseCSV(text);
+    dataAnaqueles = toObjects(headers, rows);
+    buildSearchIndex('anaqueles', dataAnaqueles);
+    refrescarVistaAnaqueles();
+    document.getElementById('last-update-anaqueles').textContent = ts();
+  } catch(e) {
+    document.getElementById('tbody-anaqueles').innerHTML = '<tr class="error-row"><td colspan="7">Error al cargar anaqueles: ' + e.message + '</td></tr>';
+  }
+  btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar';
+}
+
+function renderAnaqueles(data) {
+  const tbody = document.getElementById('tbody-anaqueles');
+  if (!data.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="7">Sin anaqueles registrados</td></tr>'; return; }
+
+  const cols = getAnaquelesColsCached(Object.keys(data[0]));
+  const frag = document.createDocumentFragment();
+
+  data.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.className = 'transition-colors';
+    tr.innerHTML =
+        '<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;"><input type="checkbox" class="row-check w-4 h-4 accent-blue-600 cursor-pointer"></td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.tipo]      || '—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.bodega]    || '—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.rack]      || '—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.posicion]  || '—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.nivel]     || '—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.ubicacion] || '—') + '</td>';
+    frag.appendChild(tr);
+  });
+  tbody.innerHTML = '';
+  tbody.appendChild(frag);
+}
+
+function filterAnaqueles() {
+  if (!dataAnaqueles.length) { alert('Los datos aun no han cargado. Presiona Actualizar primero.'); return; }
+  const q      = document.getElementById('search-anaqueles').value.trim().toLowerCase();
+  const bodega = document.getElementById('filter-whs-anaqueles').value.trim().toLowerCase();
+  const cols   = getAnaquelesColsCached(Object.keys(dataAnaqueles[0]));
+
+  const filtered = dataAnaqueles.filter((r, i) => {
+    const coincideTexto  = !q      || _searchIndex.anaqueles[i].includes(q);
+    const coincideBodega = !bodega || String(r[cols.bodega] || '').toLowerCase().includes(bodega);
+    return coincideTexto && coincideBodega;
+  });
+  renderAnaqueles(filtered);
+}
+
+function clearFilterAnaqueles() {
+  document.getElementById('search-anaqueles').value = '';
+  document.getElementById('filter-whs-anaqueles').value = '';
+  renderAnaqueles(dataAnaqueles);
+}
+
+function refrescarVistaAnaqueles() {
+  if (_valorActivo('search-anaqueles') && dataAnaqueles.length) filterAnaqueles();
+  else renderAnaqueles(dataAnaqueles);
+}
+
 
 // =============================================
 // REAPLICAR FILTROS/BUSQUEDA VIGENTES TRAS CADA CARGA
@@ -2113,10 +2344,12 @@ let _lastAutoRefresh = Date.now();
 async function cargarTodo(forceRefresh = false) {
   // Saldo es lo primero que el usuario ve — cargarlo antes
   await loadSaldo(forceRefresh);
-  // Mov y Bajas en paralelo, pero sin bloquear el UI
+  // Mov, Bajas, Articulos y Anaqueles en paralelo, pero sin bloquear el UI
   Promise.allSettled([
     loadMov(forceRefresh),
-    loadBajas(forceRefresh)
+    loadBajas(forceRefresh),
+    loadArticulos(forceRefresh),
+    loadAnaqueles(forceRefresh)
   ]);
   _lastAutoRefresh = Date.now();
 }
