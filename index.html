@@ -715,6 +715,11 @@
           <button onclick="exportCSV('articulos')" class="btn-outline-cyan flex items-center gap-1">
             <span class="material-symbols-outlined text-[16px]">download</span><span>Exportar</span>
           </button>
+          <select id="filter-estado-articulos" onchange="filterArticulos()" class="font-label-data text-[12px] rounded-md px-2 py-1 outline-none" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;">
+            <option value="">Estado: Todos</option>
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+          </select>
           <div class="relative flex items-center">
             <span class="material-symbols-outlined absolute left-2 text-[16px]" style="color:#AAA;">search</span>
             <input id="search-articulos" oninput="debouncedFilterArticulos()" onkeydown="if(event.key==='Enter')filterArticulos()" class="font-label-data text-[12px] rounded-md pl-7 pr-2 py-1 outline-none w-48" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;" placeholder="Buscar código, descripción...">
@@ -774,12 +779,40 @@
           <button onclick="filterAnaqueles()" class="btn-primary flex items-center gap-1 whitespace-nowrap">
             <span class="material-symbols-outlined text-[16px]">filter_alt</span> Filtrar
           </button>
+          <select id="filter-estatus-anaqueles" onchange="filterAnaqueles()" class="font-label-data text-[12px] rounded-md px-2 py-1 outline-none" style="background:#FFF;border:1px solid #CCCCCC;color:#1A1A1A;">
+            <option value="">Estatus: Todos</option>
+            <option value="disponible">Disponible</option>
+            <option value="ocupado">Ocupado</option>
+          </select>
           <button onclick="clearFilterAnaqueles()" class="btn-ghost flex items-center gap-1 whitespace-nowrap">
             <span class="material-symbols-outlined text-[16px]">close</span> Limpiar
           </button>
           <button onclick="loadAnaqueles()" id="btn-anaqueles" class="flex items-center gap-1 font-bold text-[12px] whitespace-nowrap transition-colors" style="color:#2563EB;">
             <span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar
           </button>
+        </div>
+      </div>
+      <div class="px-5 pt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="rounded-md p-3" style="background:#F8FAFC;border:1px solid #E5E5E5;">
+          <div class="font-label-data text-[11px] font-bold flex items-center gap-1" style="color:#707978;"><span class="material-symbols-outlined text-[16px]">inventory_2</span>BINES</div>
+          <div class="flex items-center gap-4 mt-1">
+            <span class="text-[14px]" style="color:#1A1A1A;"><b id="kpi-bin-disp" style="color:#15803D;">—</b> Disponibles</span>
+            <span class="text-[14px]" style="color:#1A1A1A;"><b id="kpi-bin-ocup" style="color:#B91C1C;">—</b> Ocupados</span>
+          </div>
+        </div>
+        <div class="rounded-md p-3" style="background:#F8FAFC;border:1px solid #E5E5E5;">
+          <div class="font-label-data text-[11px] font-bold flex items-center gap-1" style="color:#707978;"><span class="material-symbols-outlined text-[16px]">shelves</span>ANAQUEL</div>
+          <div class="flex items-center gap-4 mt-1">
+            <span class="text-[14px]" style="color:#1A1A1A;"><b id="kpi-anaquel-disp" style="color:#15803D;">—</b> Disponibles</span>
+            <span class="text-[14px]" style="color:#1A1A1A;"><b id="kpi-anaquel-ocup" style="color:#B91C1C;">—</b> Ocupados</span>
+          </div>
+        </div>
+        <div class="rounded-md p-3" style="background:#F8FAFC;border:1px solid #E5E5E5;">
+          <div class="font-label-data text-[11px] font-bold flex items-center gap-1" style="color:#707978;"><span class="material-symbols-outlined text-[16px]">height</span>ALTURA</div>
+          <div class="flex items-center gap-4 mt-1">
+            <span class="text-[14px]" style="color:#1A1A1A;"><b id="kpi-altura-disp" style="color:#15803D;">—</b> Disponibles</span>
+            <span class="text-[14px]" style="color:#1A1A1A;"><b id="kpi-altura-ocup" style="color:#B91C1C;">—</b> Ocupados</span>
+          </div>
         </div>
       </div>
       <div class="overflow-y-auto max-h-[calc(100vh-280px)] custom-scrollbar" style="will-change:transform">
@@ -793,10 +826,11 @@
               <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">POSICIÓN</th>
               <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">NIVEL</th>
               <th class="font-table-header text-table-header px-3 py-2 text-left whitespace-nowrap" style="border:1px solid #E0E0E0;">UBICACIÓN</th>
+              <th class="font-table-header text-table-header px-3 py-2 text-center whitespace-nowrap" style="border:1px solid #E0E0E0;">ESTATUS</th>
             </tr>
           </thead>
           <tbody id="tbody-anaqueles">
-            <tr class="loading-row"><td colspan="7"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Cargando datos desde Google Sheets...</td></tr>
+            <tr class="loading-row"><td colspan="8"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Cargando datos desde Google Sheets...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1059,6 +1093,7 @@ async function loadSaldo(forceRefresh = true) {
     refrescarVistaAlertas();
     updateKPIsAndDonut(dataSaldo);
     if (dataArticulos.length) refrescarVistaArticulos(); // recalcula Estado Cod. con el saldo nuevo
+    if (dataAnaqueles.length) refrescarVistaAnaqueles();  // recalcula Estatus y KPIs con el saldo nuevo
     const t = ts();
     document.getElementById('last-update-saldo').textContent = t;
     document.getElementById('last-update-alertas').textContent = t;
@@ -1668,6 +1703,7 @@ function invalidarCachesCols() {
   _articulosColsCache = null;
   _anaquelesColsCache  = null;
   _saldoCodigosSet = null;
+  _saldoUbicacionesSet = null;
 }
 
 // =============================================
@@ -1777,7 +1813,7 @@ function exportCSV(type) {
       const tds = tr.querySelectorAll('td');
       return { TIPO: tds[1]?.innerText, BODEGA: tds[2]?.innerText,
                RACK: tds[3]?.innerText, POSICION: tds[4]?.innerText, NIVEL: tds[5]?.innerText,
-               UBICACION: tds[6]?.innerText };
+               UBICACION: tds[6]?.innerText, ESTATUS: tds[7]?.innerText };
     });
     filename = 'maestra_anaqueles.xlsx';
     sheetName = 'Anaqueles';
@@ -2170,8 +2206,8 @@ function renderArticulos(data) {
   const frag = document.createDocumentFragment();
 
   data.forEach(row => {
-    const codigo = row[cols.codigo] || '';
-    const activo = codigosSaldo && codigosSaldo.has(String(codigo).trim().toUpperCase());
+    const codigoBpcs = row[cols.codigoBpcs] || '';
+    const activo = codigosSaldo && codigosSaldo.has(String(codigoBpcs).trim().toUpperCase());
     const estadoBadge = !codigosSaldo
       ? '<span style="color:#707978;font-size:11px;">—</span>'
       : activo
@@ -2181,8 +2217,8 @@ function renderArticulos(data) {
     tr.className = 'transition-colors';
     tr.innerHTML =
         '<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;"><input type="checkbox" class="row-check w-4 h-4 accent-blue-600 cursor-pointer"></td>'
-      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (codigo               || '—') + '</td>'
-      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.codigoBpcs] || '—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.codigo]     || '—') + '</td>'
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (codigoBpcs            || '—') + '</td>'
       + '<td class="px-3 py-3 " style="border:1px solid #E5E5E5;">'                 + (row[cols.desc]        || '—') + '</td>'
       + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.ean13]      || '—') + '</td>'
       + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.ean14]      || '—') + '</td>'
@@ -2194,7 +2230,7 @@ function renderArticulos(data) {
 }
 
 // =============================================
-// SET DE CÓDIGOS CON SALDO — para "Estado Cod." en Maestra de Artículos
+// SET DE CÓDIGOS CON SALDO — cruza CÓDIGO (Saldo) vs CÓDIGO BPCS (Artículos)
 // =============================================
 let _saldoCodigosSet = null;
 function getSaldoCodigosSet() {
@@ -2210,20 +2246,33 @@ function getSaldoCodigosSet() {
 function filterArticulos() {
   if (!dataArticulos.length) { alert('Los datos aun no han cargado. Presiona Actualizar primero.'); return; }
   const q = document.getElementById('search-articulos').value.trim().toLowerCase();
-  if (!q) { renderArticulos(dataArticulos); return; }
-  const filtered = dataArticulos.filter((r, i) => _searchIndex.articulos[i].includes(q));
+  const estadoFiltro = document.getElementById('filter-estado-articulos').value; // '', 'activo', 'inactivo'
+  const cols = getArticulosColsCached(Object.keys(dataArticulos[0]));
+  const codigosSaldo = getSaldoCodigosSet();
+
+  const filtered = dataArticulos.filter((r, i) => {
+    const coincideTexto = !q || _searchIndex.articulos[i].includes(q);
+    let coincideEstado = true;
+    if (estadoFiltro) {
+      const activo = codigosSaldo && codigosSaldo.has(String(r[cols.codigoBpcs] || '').trim().toUpperCase());
+      coincideEstado = estadoFiltro === 'activo' ? activo : !activo;
+    }
+    return coincideTexto && coincideEstado;
+  });
   renderArticulos(filtered);
 }
 
 function clearFilterArticulos() {
   document.getElementById('search-articulos').value = '';
+  document.getElementById('filter-estado-articulos').value = '';
   renderArticulos(dataArticulos);
 }
 
 function refrescarVistaArticulos() {
-  if (_valorActivo('search-articulos') && dataArticulos.length) filterArticulos();
+  if ((_valorActivo('search-articulos') || document.getElementById('filter-estado-articulos').value) && dataArticulos.length) filterArticulos();
   else renderArticulos(dataArticulos);
 }
+
 
 // =============================================
 // MAESTRA DE ANAQUELES
@@ -2231,10 +2280,10 @@ function refrescarVistaArticulos() {
 async function loadAnaqueles(forceRefresh = true) {
   const btn = document.getElementById('btn-anaqueles');
   btn.innerHTML = '<span class="material-symbols-outlined spin text-[16px]">sync</span> Cargando...';
-  document.getElementById('tbody-anaqueles').innerHTML = '<tr class="loading-row"><td colspan="7"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Conectando con Google Sheets...</td></tr>';
+  document.getElementById('tbody-anaqueles').innerHTML = '<tr class="loading-row"><td colspan="8"><span class="material-symbols-outlined spin" style="vertical-align:middle;margin-right:8px">sync</span>Conectando con Google Sheets...</td></tr>';
 
   if (!URL_ANAQUELES) {
-    document.getElementById('tbody-anaqueles').innerHTML = '<tr class="error-row"><td colspan="7">Falta configurar URL_ANAQUELES.</td></tr>';
+    document.getElementById('tbody-anaqueles').innerHTML = '<tr class="error-row"><td colspan="8">Falta configurar URL_ANAQUELES.</td></tr>';
     btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar';
     return;
   }
@@ -2247,19 +2296,27 @@ async function loadAnaqueles(forceRefresh = true) {
     refrescarVistaAnaqueles();
     document.getElementById('last-update-anaqueles').textContent = ts();
   } catch(e) {
-    document.getElementById('tbody-anaqueles').innerHTML = '<tr class="error-row"><td colspan="7">Error al cargar anaqueles: ' + e.message + '</td></tr>';
+    document.getElementById('tbody-anaqueles').innerHTML = '<tr class="error-row"><td colspan="8">Error al cargar anaqueles: ' + e.message + '</td></tr>';
   }
   btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">refresh</span> Actualizar';
 }
 
 function renderAnaqueles(data) {
   const tbody = document.getElementById('tbody-anaqueles');
-  if (!data.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="7">Sin anaqueles registrados</td></tr>'; return; }
+  if (!data.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="8">Sin anaqueles registrados</td></tr>'; return; }
 
   const cols = getAnaquelesColsCached(Object.keys(data[0]));
+  const ubicacionesOcupadas = getSaldoUbicacionesOcupadas();
   const frag = document.createDocumentFragment();
 
   data.forEach(row => {
+    const ubicacion = row[cols.ubicacion] || '';
+    const ocupado = ubicacionesOcupadas && ubicacionesOcupadas.has(String(ubicacion).trim().toUpperCase());
+    const estatusBadge = !ubicacionesOcupadas
+      ? '<span style="color:#707978;font-size:11px;">—</span>'
+      : ocupado
+        ? '<span class="badge-error">OCUPADO</span>'
+        : '<span class="badge-ok">DISPONIBLE</span>';
     const tr = document.createElement('tr');
     tr.className = 'transition-colors';
     tr.innerHTML =
@@ -2269,23 +2326,94 @@ function renderAnaqueles(data) {
       + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.rack]      || '—') + '</td>'
       + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.posicion]  || '—') + '</td>'
       + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.nivel]     || '—') + '</td>'
-      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (row[cols.ubicacion] || '—') + '</td>';
+      + '<td class="px-3 py-3 font-label-data " style="border:1px solid #E5E5E5;">' + (ubicacion            || '—') + '</td>'
+      + '<td class="px-3 py-3 text-center " style="border:1px solid #E5E5E5;">'     + estatusBadge + '</td>';
     frag.appendChild(tr);
   });
   tbody.innerHTML = '';
   tbody.appendChild(frag);
 }
 
+// =============================================
+// SET DE UBICACIONES OCUPADAS — cruza UBICACIÓN (Saldo) vs UBICACIÓN (Anaqueles)
+// Una ubicación se considera OCUPADA si tiene saldo (cantidad > 0) en esa ubicación.
+// =============================================
+let _saldoUbicacionesSet = null;
+function parseCantidadNumero(raw) {
+  let rawQty = (raw || '0').toString().trim();
+  let cleanQty = rawQty.replace(/[^\d.,]/g, '');
+  if (cleanQty.includes(',') && cleanQty.includes('.')) {
+    cleanQty = cleanQty.replace(/\./g, '').replace(',', '.');
+  } else if (cleanQty.includes(',')) {
+    cleanQty = cleanQty.replace(',', '.');
+  } else {
+    cleanQty = cleanQty.replace(/\./g, '');
+  }
+  return parseFloat(cleanQty) || 0;
+}
+function getSaldoUbicacionesOcupadas() {
+  if (!dataSaldo.length) return null; // saldo aun no ha cargado: estatus desconocido
+  if (_saldoUbicacionesSet) return _saldoUbicacionesSet;
+  const colsSaldo = getSaldoColsCached(Object.keys(dataSaldo[0]));
+  const acumulado = {};
+  dataSaldo.forEach(r => {
+    const ubic = String(r[colsSaldo.ubic] || '').trim().toUpperCase();
+    if (!ubic) return;
+    acumulado[ubic] = (acumulado[ubic] || 0) + parseCantidadNumero(r[colsSaldo.cantidad]);
+  });
+  _saldoUbicacionesSet = new Set(Object.keys(acumulado).filter(u => acumulado[u] > 0));
+  return _saldoUbicacionesSet;
+}
+
+// =============================================
+// KPIs de ocupación: BINES / ANAQUEL / ALTURA
+// =============================================
+function updateAnaquelesKPIs() {
+  const tipos = ['bin', 'anaquel', 'altura'];
+  const setDash = () => tipos.forEach(t => {
+    document.getElementById('kpi-' + t + '-disp').textContent = '—';
+    document.getElementById('kpi-' + t + '-ocup').textContent = '—';
+  });
+
+  if (!dataAnaqueles.length) { setDash(); return; }
+  const ubicacionesOcupadas = getSaldoUbicacionesOcupadas();
+  if (!ubicacionesOcupadas) { setDash(); return; }
+
+  const cols = getAnaquelesColsCached(Object.keys(dataAnaqueles[0]));
+  const counts = { BIN: { disp: 0, ocup: 0 }, ANAQUEL: { disp: 0, ocup: 0 }, ALTURA: { disp: 0, ocup: 0 } };
+
+  dataAnaqueles.forEach(r => {
+    const tipo = String(r[cols.tipo] || '').trim().toUpperCase();
+    if (!counts[tipo]) return;
+    const ocupado = ubicacionesOcupadas.has(String(r[cols.ubicacion] || '').trim().toUpperCase());
+    if (ocupado) counts[tipo].ocup++; else counts[tipo].disp++;
+  });
+
+  document.getElementById('kpi-bin-disp').textContent     = counts.BIN.disp;
+  document.getElementById('kpi-bin-ocup').textContent     = counts.BIN.ocup;
+  document.getElementById('kpi-anaquel-disp').textContent = counts.ANAQUEL.disp;
+  document.getElementById('kpi-anaquel-ocup').textContent = counts.ANAQUEL.ocup;
+  document.getElementById('kpi-altura-disp').textContent  = counts.ALTURA.disp;
+  document.getElementById('kpi-altura-ocup').textContent  = counts.ALTURA.ocup;
+}
+
 function filterAnaqueles() {
   if (!dataAnaqueles.length) { alert('Los datos aun no han cargado. Presiona Actualizar primero.'); return; }
-  const q      = document.getElementById('search-anaqueles').value.trim().toLowerCase();
-  const bodega = document.getElementById('filter-whs-anaqueles').value.trim().toLowerCase();
-  const cols   = getAnaquelesColsCached(Object.keys(dataAnaqueles[0]));
+  const q             = document.getElementById('search-anaqueles').value.trim().toLowerCase();
+  const bodega        = document.getElementById('filter-whs-anaqueles').value.trim().toLowerCase();
+  const estatusFiltro = document.getElementById('filter-estatus-anaqueles').value; // '', 'ocupado', 'disponible'
+  const cols          = getAnaquelesColsCached(Object.keys(dataAnaqueles[0]));
+  const ubicacionesOcupadas = getSaldoUbicacionesOcupadas();
 
   const filtered = dataAnaqueles.filter((r, i) => {
     const coincideTexto  = !q      || _searchIndex.anaqueles[i].includes(q);
     const coincideBodega = !bodega || String(r[cols.bodega] || '').toLowerCase().includes(bodega);
-    return coincideTexto && coincideBodega;
+    let coincideEstatus = true;
+    if (estatusFiltro) {
+      const ocupado = ubicacionesOcupadas && ubicacionesOcupadas.has(String(r[cols.ubicacion] || '').trim().toUpperCase());
+      coincideEstatus = estatusFiltro === 'ocupado' ? ocupado : !ocupado;
+    }
+    return coincideTexto && coincideBodega && coincideEstatus;
   });
   renderAnaqueles(filtered);
 }
@@ -2293,13 +2421,17 @@ function filterAnaqueles() {
 function clearFilterAnaqueles() {
   document.getElementById('search-anaqueles').value = '';
   document.getElementById('filter-whs-anaqueles').value = '';
+  document.getElementById('filter-estatus-anaqueles').value = '';
   renderAnaqueles(dataAnaqueles);
 }
 
 function refrescarVistaAnaqueles() {
-  if (_valorActivo('search-anaqueles') && dataAnaqueles.length) filterAnaqueles();
+  const hayFiltro = _valorActivo('search-anaqueles') || _valorActivo('filter-whs-anaqueles') || document.getElementById('filter-estatus-anaqueles').value;
+  if (hayFiltro && dataAnaqueles.length) filterAnaqueles();
   else renderAnaqueles(dataAnaqueles);
+  updateAnaquelesKPIs();
 }
+
 
 
 // =============================================
