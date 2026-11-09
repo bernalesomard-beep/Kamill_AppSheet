@@ -648,11 +648,11 @@
 
         <div class="space-y-2 mb-4">
           <div class="flex items-center justify-between text-[13px]" style="color:#1A1A1A;">
-            <span>Alturas ocupadas</span>
+            <span>Ubicaciones ocupadas</span>
             <span class="font-label-data font-bold" id="ocup-alturas-val">—</span>
           </div>
           <div class="flex items-center justify-between text-[13px]" style="color:#1A1A1A;">
-            <span>Ubicaciones de piso (fijo)</span>
+            <span>Anaqueles / piso (fijo)</span>
             <span class="font-label-data font-bold" id="ocup-piso-val">36</span>
           </div>
           <div class="flex justify-between items-center mt-2 pt-2" style="border-top:1px solid #E5E5E5;">
@@ -1198,6 +1198,7 @@ async function loadSaldo(forceRefresh = true) {
     refrescarVistaSaldo();
     refrescarVistaAlertas();
     updateKPIsAndDonut(dataSaldo);
+    updateOcupabilidadWidget(); // ahora depende solo de Saldo
     if (dataArticulos.length) refrescarVistaArticulos(); // recalcula Estado Cod. con el saldo nuevo
     if (dataAnaqueles.length) refrescarVistaAnaqueles();  // recalcula Estatus y KPIs con el saldo nuevo
     const t = ts();
@@ -2683,26 +2684,31 @@ function refrescarVistaOcupabilidad() {
 // =============================================
 // WIDGET DASHBOARD — Ocupabilidad de hoy + botón Alimentar
 // =============================================
+// Ubicación "normal": no empieza con 00 y su 2.º y 3.er carácter no son letras
+function esUbicacionNormal(ubic) {
+  const u = String(ubic || '').trim().toUpperCase();
+  if (!u) return false;
+  if (u.startsWith('00')) return false;
+  if (/\p{L}/u.test(u.charAt(1))) return false;
+  if (/\p{L}/u.test(u.charAt(2))) return false;
+  return true;
+}
+
 function updateOcupabilidadWidget() {
   const hoy = new Date();
   document.getElementById('ocup-fecha-hoy').textContent = hoy.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-  const alturasEl = document.getElementById('ocup-alturas-val');
-  const totalEl   = document.getElementById('ocup-total-val');
+  const ubicEl  = document.getElementById('ocup-alturas-val');
+  const totalEl = document.getElementById('ocup-total-val');
 
-  if (!dataAnaqueles.length) { alturasEl.textContent = '—'; totalEl.textContent = '—'; return; }
-  const ubicacionesOcupadas = getSaldoUbicacionesOcupadas();
-  if (!ubicacionesOcupadas) { alturasEl.textContent = '—'; totalEl.textContent = '—'; return; }
+  const ocupadas = getSaldoUbicacionesOcupadas(); // Set de ubicaciones únicas con saldo > 0
+  if (!ocupadas) { ubicEl.textContent = '—'; totalEl.textContent = '—'; return; }
 
-  const cols = getAnaquelesColsCached(Object.keys(dataAnaqueles[0]));
-  let alturasOcupadas = 0;
-  dataAnaqueles.forEach(r => {
-    if (String(r[cols.tipo] || '').trim().toUpperCase() !== 'ALTURA') return;
-    if (ubicacionesOcupadas.has(String(r[cols.ubicacion] || '').trim().toUpperCase())) alturasOcupadas++;
-  });
+  let normales = 0;
+  ocupadas.forEach(u => { if (esUbicacionNormal(u)) normales++; });
 
-  alturasEl.textContent = alturasOcupadas;
-  totalEl.textContent   = alturasOcupadas + PISO_FIJO;
+  ubicEl.textContent  = normales;
+  totalEl.textContent = normales + PISO_FIJO;
 }
 
 async function alimentarOcupabilidad() {
